@@ -14,23 +14,23 @@ class Window(
   val title: String,
   val width: Int,
   val height: Int,
-  val style: Int = sfDefaultStyle
+  val style: Int = sfDefaultStyle,
+  var fullscreen: Boolean = false
 ) {
-    var fullscreen = false
-    set(value) {
-        // todo: switch fullscreen
-        field = value
-    }
 
     val event = nativeHeap.alloc<sfEvent>()
-    val handle: sfRenderWindow
+    var handle: sfRenderWindow? = null
     var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
 
-    constructor(title: String): this(title, 800, 600) {
-        fullscreen = true
-    }
+    constructor(title: String): this(title, 800, 600, fullscreen = true)
 
     init {
+        createWindow()
+    }
+
+    private fun getWindowHandle() = handle ?: throw IllegalStateException("Window handle is null!")
+
+    private fun createWindow() {
         var window: CPointer<sfRenderWindow>? = null
 
         if (fullscreen) {
@@ -55,45 +55,45 @@ class Window(
     }
 
     fun clear() {
-        sfRenderWindow_clear(handle.ptr, clearColor)
+        sfRenderWindow_clear(getWindowHandle().ptr, clearColor)
     }
 
     fun draw(drawable: Drawable) {
-        drawable.draw(handle)
+        drawable.draw(getWindowHandle())
     }
 
     fun draw(drawable: Drawable, x: Float, y: Float) {
         drawable.setPosition(x, y)
-        drawable.draw(handle)
+        drawable.draw(getWindowHandle())
     }
 
     fun display() {
-        sfRenderWindow_display(handle.ptr)
+        sfRenderWindow_display(getWindowHandle().ptr)
     }
 
     fun close() {
-        sfRenderWindow_close(handle.ptr)
+        sfRenderWindow_close(getWindowHandle().ptr)
     }
 
     fun destroy() {
         nativeHeap.free(event.ptr)
-        sfRenderWindow_destroy(handle.ptr)
+        sfRenderWindow_destroy(getWindowHandle().ptr)
     }
 
     fun pollEvents(callback: (sfEvent) -> Unit) {
-        while (sfRenderWindow_pollEvent(handle.ptr, event.ptr) > 0) {
+        while (sfRenderWindow_pollEvent(getWindowHandle().ptr, event.ptr) > 0) {
             callback(event)
         }
     }
 
-    fun isOpen() = sfRenderWindow_isOpen(handle.ptr) > 0
+    fun isOpen() = sfRenderWindow_isOpen(getWindowHandle().ptr) > 0
 
     fun enableVerticalSync() {
-        sfRenderWindow_setVerticalSyncEnabled(handle.ptr, 1)
+        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle().ptr, 1)
     }
 
     fun disableVerticalSync() {
-        sfRenderWindow_setVerticalSyncEnabled(handle.ptr, 0)
+        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle().ptr, 0)
     }
 }
 

@@ -1,8 +1,11 @@
 package games.perses.sfml.text
 
 import games.perses.sfml.Drawable
-import kotlinx.cinterop.*
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.nativeHeap.free
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.readValue
 import sfml.*
 
 /**
@@ -23,8 +26,8 @@ class Font(
 
 class Text(
   font: Font,
-  var x: Float,
-  var y: Float,
+  x: Float,
+  y: Float,
   text: String,
   size: Int,
   red: Byte = 255.toByte(),
@@ -52,10 +55,15 @@ class Text(
     override fun setPosition(x: Float, y: Float) {
         position.x = x
         position.y = y
+
+        sfText_setPosition(textHandle, position.readValue())
+    }
+
+    fun setText(text: String) {
+        sfText_setString(textHandle, text)
     }
 
     override fun draw(window: sfRenderWindow) {
-        sfText_setPosition(textHandle, position.readValue())
         sfRenderWindow_drawText(window.ptr, textHandle, null)
     }
 }
