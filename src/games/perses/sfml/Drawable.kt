@@ -1,5 +1,7 @@
 package games.perses.sfml
 
+import sfml.sfRenderWindow
+
 /**
  * User: rnentjes
  * Date: 12-4-17
@@ -8,6 +10,6 @@ package games.perses.sfml
 
 interface Drawable {
 
-    fun draw()
+    fun draw(window: sfRenderWindow)
 
 }

@@ -1,3 +1,4 @@
+import games.perses.sfml.Window
 import games.perses.sfml.sprite.Sprites
 import games.perses.sfml.sprite.Textures
 import games.perses.sfml.text.Font
@@ -23,6 +24,8 @@ fun main(args: Array<String>) {
         videoMode.bitsPerPixel = 24
 
         val window = sfRenderWindow_create(videoMode.readValue(), "It works!", sfDefaultStyle, null)
+        val window2 = Window("Test", 1024, 768)
+        window2.clearColor = sfColor_fromRGBA(0,0,100,255.toByte())
 
         if (window == null) {
             println("Unable to create render window (returned null).")
@@ -42,6 +45,7 @@ fun main(args: Array<String>) {
             sfCircleShape_setOutlineThickness(circle, 10f)
 
             val sprite = Sprites.create("data/img/smiley.png")
+            val sprite2 = Sprites.create("data/img/smiley.png")
 
             var time = 0f
             var dx = 150f
@@ -82,6 +86,22 @@ fun main(args: Array<String>) {
                     }
                 }
 
+                while (sfRenderWindow_pollEvent(window2.handle.ptr, event.ptr) > 0) {
+                    when (event.type) {
+                        sfEventType.sfEvtClosed -> {
+                            sfRenderWindow_close(window)
+                        }
+                        sfEventType.sfEvtKeyPressed -> {
+                            // println("Key: ${event.key.code}")
+                            if (event.key.code == 36) {
+                                sfRenderWindow_close(window)
+                            }
+                        }
+                        else -> {
+                        }
+                    }
+                }
+
                 if (circlePosition.x < 10 || circlePosition.x > 600) {
                     dx = -dx
                 }
@@ -98,11 +118,19 @@ fun main(args: Array<String>) {
 
                 sfRenderWindow_drawCircleShape(window, circle, null)
 
+                // window.draw(sprite, 400f, 100f)
                 sprite.draw(window, 400f, 100f)
 
                 helloKonan.draw(window)
 
                 sfRenderWindow_display(window)
+
+                window2.clear()
+                sprite2.position.x = circlePosition.x
+                sprite2.position.y = circlePosition.y
+                window2.draw(sprite2)
+                window2.display()
+
                 count++
             }
 
@@ -112,7 +140,6 @@ fun main(args: Array<String>) {
             sfCircleShape_destroy(circle)
             sfRenderWindow_destroy(window)
         }
-
 
         sfMusic_destroy(music)
 
