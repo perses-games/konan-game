@@ -12,4 +12,6 @@ interface Drawable {
 
     fun draw(window: sfRenderWindow)
 
+    fun setPosition(x: Float, y:Float)
+
 }

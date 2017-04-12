@@ -90,6 +90,11 @@ class Sprite(
         scale.y = 1f
     }
 
+    override fun setPosition(x: Float, y: Float) {
+        position.x = x
+        position.y = y
+    }
+
     override fun draw(window: sfRenderWindow) {
         sfSprite_setPosition(handle.ptr, position.readValue())
         sfSprite_setScale(handle.ptr, scale.readValue())
@@ -97,17 +102,6 @@ class Sprite(
         sfSprite_setTexture(handle.ptr, texture.handle.ptr, 0)
 
         sfRenderWindow_drawSprite(window.ptr, handle.ptr, null)
-    }
-
-    fun draw(window: CPointer<sfRenderWindow>, x: Float, y: Float, rotation: Float = 0f, scale: Float = 1f) {
-        position.x = x
-        position.y = y
-
-        // todo: rotation and scale
-        sfSprite_setPosition(handle.ptr, position.readValue())
-        sfSprite_setTexture(handle.ptr, texture.handle.ptr, 0)
-
-        sfRenderWindow_drawSprite(window, handle.ptr, null)
     }
 
     fun destroy() {

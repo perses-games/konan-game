@@ -21,6 +21,8 @@ class Window(
         // todo: switch fullscreen
         field = value
     }
+
+    val event = nativeHeap.alloc<sfEvent>()
     val handle: sfRenderWindow
     var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
 
@@ -60,12 +62,38 @@ class Window(
         drawable.draw(handle)
     }
 
+    fun draw(drawable: Drawable, x: Float, y: Float) {
+        drawable.setPosition(x, y)
+        drawable.draw(handle)
+    }
+
     fun display() {
         sfRenderWindow_display(handle.ptr)
     }
 
+    fun close() {
+        sfRenderWindow_close(handle.ptr)
+    }
+
     fun destroy() {
+        nativeHeap.free(event.ptr)
         sfRenderWindow_destroy(handle.ptr)
+    }
+
+    fun pollEvents(callback: (sfEvent) -> Unit) {
+        while (sfRenderWindow_pollEvent(handle.ptr, event.ptr) > 0) {
+            callback(event)
+        }
+    }
+
+    fun isOpen() = sfRenderWindow_isOpen(handle.ptr) > 0
+
+    fun enableVerticalSync() {
+        sfRenderWindow_setVerticalSyncEnabled(handle.ptr, 1)
+    }
+
+    fun disableVerticalSync() {
+        sfRenderWindow_setVerticalSyncEnabled(handle.ptr, 0)
     }
 }
 

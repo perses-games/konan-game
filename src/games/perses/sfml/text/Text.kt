@@ -1,5 +1,6 @@
 package games.perses.sfml.text
 
+import games.perses.sfml.Drawable
 import kotlinx.cinterop.*
 import kotlinx.cinterop.nativeHeap.free
 import sfml.*
@@ -29,7 +30,7 @@ class Text(
   red: Byte = 255.toByte(),
   green: Byte = 255.toByte(),
   blue: Byte = 255.toByte()
-  ) {
+  ): Drawable {
     val textHandle = sfText_create()
     val position = nativeHeap.alloc<sfVector2f>()
 
@@ -38,6 +39,9 @@ class Text(
         sfText_setString(textHandle, text)
         sfText_setCharacterSize(textHandle, size)
         sfText_setColor(textHandle, sfColor_fromRGB(red, green ,blue))
+
+        position.x = x
+        position.y = y
     }
 
     fun destroy() {
@@ -45,11 +49,13 @@ class Text(
         free(position.rawPtr)
     }
 
-    fun draw(window: CPointer<sfRenderWindow>, x: Float = this.x, y: Float = this.y) {
+    override fun setPosition(x: Float, y: Float) {
         position.x = x
         position.y = y
+    }
 
+    override fun draw(window: sfRenderWindow) {
         sfText_setPosition(textHandle, position.readValue())
-        sfRenderWindow_drawText(window, textHandle, null)
+        sfRenderWindow_drawText(window.ptr, textHandle, null)
     }
 }

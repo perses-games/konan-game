@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/konan-sfml.iml" filepath="$PROJECT_DIR$/konan-sfml.iml" />
+      <module fileurl="file://$PROJECT_DIR$/konan-game.iml" filepath="$PROJECT_DIR$/konan-game.iml" />
     </modules>
   </component>
 </project>
