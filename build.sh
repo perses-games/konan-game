@@ -24,4 +24,4 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 IFS=$'\n';SOURCE_FILES=(`find $DIR/src -name '*.kt'`)
 SOURCE_FILES=${SOURCE_FILES[*]}
 
-konanc $COMPILER_ARGS -target $TARGET $SOURCE_FILES -library sfml.kt.bc -library math.kt.bc -linkerArgs "$LINKER_ARGS" -o shooter.kexe -opt || exit 1
+konanc $COMPILER_ARGS -target $TARGET $SOURCE_FILES -library sfml.kt.bc -library math.kt.bc -library opengl.kt.bc -linkerArgs "$LINKER_ARGS" -o shooter.kexe || exit 1

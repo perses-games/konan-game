@@ -97,6 +97,9 @@ fun frexp(__x: Double, __exponent: CValuesRef<IntVar>?): Double {
     }
 }
 
+@SymbolName("kni_math_frexp")
+private external fun kni_frexp(__x: Double, __exponent: NativePtr): Double
+
 fun __frexp(__x: Double, __exponent: CValuesRef<IntVar>?): Double {
     return memScoped {
         val ___x = __x
@@ -105,6 +108,9 @@ fun __frexp(__x: Double, __exponent: CValuesRef<IntVar>?): Double {
         res
     }
 }
+
+@SymbolName("kni_math___frexp")
+private external fun kni___frexp(__x: Double, __exponent: NativePtr): Double
 
 @SymbolName("kni_math_ldexp")
 external fun ldexp(__x: Double, __exponent: Int): Double
@@ -133,6 +139,9 @@ fun modf(__x: Double, __iptr: CValuesRef<DoubleVar>?): Double {
     }
 }
 
+@SymbolName("kni_math_modf")
+private external fun kni_modf(__x: Double, __iptr: NativePtr): Double
+
 fun __modf(__x: Double, __iptr: CValuesRef<DoubleVar>?): Double {
     return memScoped {
         val ___x = __x
@@ -141,6 +150,9 @@ fun __modf(__x: Double, __iptr: CValuesRef<DoubleVar>?): Double {
         res
     }
 }
+
+@SymbolName("kni_math___modf")
+private external fun kni___modf(__x: Double, __iptr: NativePtr): Double
 
 @SymbolName("kni_math_expm1")
 external fun expm1(__x: Double): Double
@@ -240,6 +252,9 @@ fun nan(__tagb: String?): Double {
     }
 }
 
+@SymbolName("kni_math_nan")
+private external fun kni_nan(__tagb: NativePtr): Double
+
 fun __nan(__tagb: String?): Double {
     return memScoped {
         val ___tagb = __tagb?.cstr?.getPointer(memScope).rawValue
@@ -247,6 +262,9 @@ fun __nan(__tagb: String?): Double {
         res
     }
 }
+
+@SymbolName("kni_math___nan")
+private external fun kni___nan(__tagb: NativePtr): Double
 
 @SymbolName("kni_math___isnan")
 external fun __isnan(__value: Double): Int
@@ -339,6 +357,9 @@ fun remquo(__x: Double, __y: Double, __quo: CValuesRef<IntVar>?): Double {
     }
 }
 
+@SymbolName("kni_math_remquo")
+private external fun kni_remquo(__x: Double, __y: Double, __quo: NativePtr): Double
+
 fun __remquo(__x: Double, __y: Double, __quo: CValuesRef<IntVar>?): Double {
     return memScoped {
         val ___x = __x
@@ -348,6 +369,9 @@ fun __remquo(__x: Double, __y: Double, __quo: CValuesRef<IntVar>?): Double {
         res
     }
 }
+
+@SymbolName("kni_math___remquo")
+private external fun kni___remquo(__x: Double, __y: Double, __quo: NativePtr): Double
 
 @SymbolName("kni_math_lrint")
 external fun lrint(__x: Double): Long
@@ -496,6 +520,9 @@ fun frexpf(__x: Float, __exponent: CValuesRef<IntVar>?): Float {
     }
 }
 
+@SymbolName("kni_math_frexpf")
+private external fun kni_frexpf(__x: Float, __exponent: NativePtr): Float
+
 fun __frexpf(__x: Float, __exponent: CValuesRef<IntVar>?): Float {
     return memScoped {
         val ___x = __x
@@ -504,6 +531,9 @@ fun __frexpf(__x: Float, __exponent: CValuesRef<IntVar>?): Float {
         res
     }
 }
+
+@SymbolName("kni_math___frexpf")
+private external fun kni___frexpf(__x: Float, __exponent: NativePtr): Float
 
 @SymbolName("kni_math_ldexpf")
 external fun ldexpf(__x: Float, __exponent: Int): Float
@@ -532,6 +562,9 @@ fun modff(__x: Float, __iptr: CValuesRef<FloatVar>?): Float {
     }
 }
 
+@SymbolName("kni_math_modff")
+private external fun kni_modff(__x: Float, __iptr: NativePtr): Float
+
 fun __modff(__x: Float, __iptr: CValuesRef<FloatVar>?): Float {
     return memScoped {
         val ___x = __x
@@ -540,6 +573,9 @@ fun __modff(__x: Float, __iptr: CValuesRef<FloatVar>?): Float {
         res
     }
 }
+
+@SymbolName("kni_math___modff")
+private external fun kni___modff(__x: Float, __iptr: NativePtr): Float
 
 @SymbolName("kni_math_expm1f")
 external fun expm1f(__x: Float): Float
@@ -639,6 +675,9 @@ fun nanf(__tagb: String?): Float {
     }
 }
 
+@SymbolName("kni_math_nanf")
+private external fun kni_nanf(__tagb: NativePtr): Float
+
 fun __nanf(__tagb: String?): Float {
     return memScoped {
         val ___tagb = __tagb?.cstr?.getPointer(memScope).rawValue
@@ -646,6 +685,9 @@ fun __nanf(__tagb: String?): Float {
         res
     }
 }
+
+@SymbolName("kni_math___nanf")
+private external fun kni___nanf(__tagb: NativePtr): Float
 
 @SymbolName("kni_math___isnanf")
 external fun __isnanf(__value: Float): Int
@@ -738,6 +780,9 @@ fun remquof(__x: Float, __y: Float, __quo: CValuesRef<IntVar>?): Float {
     }
 }
 
+@SymbolName("kni_math_remquof")
+private external fun kni_remquof(__x: Float, __y: Float, __quo: NativePtr): Float
+
 fun __remquof(__x: Float, __y: Float, __quo: CValuesRef<IntVar>?): Float {
     return memScoped {
         val ___x = __x
@@ -747,6 +792,9 @@ fun __remquof(__x: Float, __y: Float, __quo: CValuesRef<IntVar>?): Float {
         res
     }
 }
+
+@SymbolName("kni_math___remquof")
+private external fun kni___remquof(__x: Float, __y: Float, __quo: NativePtr): Float
 
 @SymbolName("kni_math_lrintf")
 external fun lrintf(__x: Float): Long
@@ -803,214 +851,428 @@ external fun fmaf(__x: Float, __y: Float, __z: Float): Float
 external fun __fmaf(__x: Float, __y: Float, __z: Float): Float
 
 val __llvm__: Int = 1
+
 val __clang__: Int = 1
+
 val __clang_major__: Int = 3
+
 val __clang_minor__: Int = 9
+
 val __clang_patchlevel__: Int = 0
+
 val __GNUC_MINOR__: Int = 2
+
 val __GNUC_PATCHLEVEL__: Int = 1
+
 val __GNUC__: Int = 4
+
 val __GXX_ABI_VERSION: Int = 1002
+
 val __ATOMIC_RELAXED: Int = 0
+
 val __ATOMIC_CONSUME: Int = 1
+
 val __ATOMIC_ACQUIRE: Int = 2
+
 val __ATOMIC_RELEASE: Int = 3
+
 val __ATOMIC_ACQ_REL: Int = 4
+
 val __ATOMIC_SEQ_CST: Int = 5
+
 val __PRAGMA_REDEFINE_EXTNAME: Int = 1
+
 val __CONSTANT_CFSTRINGS__: Int = 1
+
 val __ORDER_LITTLE_ENDIAN__: Int = 1234
+
 val __ORDER_BIG_ENDIAN__: Int = 4321
+
 val __ORDER_PDP_ENDIAN__: Int = 3412
+
 val __BYTE_ORDER__: Int = 1234
+
 val __LITTLE_ENDIAN__: Int = 1
+
 val _LP64: Int = 1
+
 val __LP64__: Int = 1
+
 val __CHAR_BIT__: Int = 8
+
 val __SCHAR_MAX__: Int = 127
+
 val __SHRT_MAX__: Int = 32767
+
 val __INT_MAX__: Int = 2147483647
+
 val __LONG_MAX__: Long = 9223372036854775807
+
 val __LONG_LONG_MAX__: Long = 9223372036854775807
+
 val __WCHAR_MAX__: Int = 2147483647
+
 val __INTMAX_MAX__: Long = 9223372036854775807
+
 val __SIZE_MAX__: Long = -1
+
 val __UINTMAX_MAX__: Long = -1
+
 val __PTRDIFF_MAX__: Long = 9223372036854775807
+
 val __INTPTR_MAX__: Long = 9223372036854775807
+
 val __UINTPTR_MAX__: Long = -1
+
 val __SIZEOF_DOUBLE__: Int = 8
+
 val __SIZEOF_FLOAT__: Int = 4
+
 val __SIZEOF_INT__: Int = 4
+
 val __SIZEOF_LONG__: Int = 8
+
 val __SIZEOF_LONG_DOUBLE__: Int = 16
+
 val __SIZEOF_LONG_LONG__: Int = 8
+
 val __SIZEOF_POINTER__: Int = 8
+
 val __SIZEOF_SHORT__: Int = 2
+
 val __SIZEOF_PTRDIFF_T__: Int = 8
+
 val __SIZEOF_SIZE_T__: Int = 8
+
 val __SIZEOF_WCHAR_T__: Int = 4
+
 val __SIZEOF_WINT_T__: Int = 4
+
 val __SIZEOF_INT128__: Int = 16
+
 val __INTMAX_WIDTH__: Int = 64
+
 val __PTRDIFF_WIDTH__: Int = 64
+
 val __INTPTR_WIDTH__: Int = 64
+
 val __SIZE_WIDTH__: Int = 64
+
 val __WCHAR_WIDTH__: Int = 32
+
 val __WINT_WIDTH__: Int = 32
+
 val __SIG_ATOMIC_WIDTH__: Int = 32
+
 val __SIG_ATOMIC_MAX__: Int = 2147483647
+
 val __UINTMAX_WIDTH__: Int = 64
+
 val __UINTPTR_WIDTH__: Int = 64
+
 val __FLT_DENORM_MIN__: Float = bitsToFloat(1) /* == 1.4E-45 */
+
 val __FLT_HAS_DENORM__: Int = 1
+
 val __FLT_DIG__: Int = 6
+
 val __FLT_DECIMAL_DIG__: Int = 9
+
 val __FLT_EPSILON__: Float = bitsToFloat(872415232) /* == 1.1920929E-7 */
+
 val __FLT_HAS_INFINITY__: Int = 1
+
 val __FLT_HAS_QUIET_NAN__: Int = 1
+
 val __FLT_MANT_DIG__: Int = 24
+
 val __FLT_MAX_10_EXP__: Int = 38
+
 val __FLT_MAX_EXP__: Int = 128
+
 val __FLT_MAX__: Float = bitsToFloat(2139095039) /* == 3.4028235E38 */
+
 val __FLT_MIN_10_EXP__: Int = -37
+
 val __FLT_MIN_EXP__: Int = -125
+
 val __FLT_MIN__: Float = bitsToFloat(8388608) /* == 1.17549435E-38 */
+
 val __DBL_DENORM_MIN__: Double = bitsToDouble(1) /* == 4.9E-324 */
+
 val __DBL_HAS_DENORM__: Int = 1
+
 val __DBL_DIG__: Int = 15
+
 val __DBL_DECIMAL_DIG__: Int = 17
+
 val __DBL_EPSILON__: Double = bitsToDouble(4372995238176751616) /* == 2.220446049250313E-16 */
+
 val __DBL_HAS_INFINITY__: Int = 1
+
 val __DBL_HAS_QUIET_NAN__: Int = 1
+
 val __DBL_MANT_DIG__: Int = 53
+
 val __DBL_MAX_10_EXP__: Int = 308
+
 val __DBL_MAX_EXP__: Int = 1024
+
 val __DBL_MAX__: Double = bitsToDouble(9218868437227405311) /* == 1.7976931348623157E308 */
+
 val __DBL_MIN_10_EXP__: Int = -307
+
 val __DBL_MIN_EXP__: Int = -1021
+
 val __DBL_MIN__: Double = bitsToDouble(4503599627370496) /* == 2.2250738585072014E-308 */
+
+
 val __LDBL_HAS_DENORM__: Int = 1
+
 val __LDBL_DIG__: Int = 18
+
 val __LDBL_DECIMAL_DIG__: Int = 21
+
+
 val __LDBL_HAS_INFINITY__: Int = 1
+
 val __LDBL_HAS_QUIET_NAN__: Int = 1
+
 val __LDBL_MANT_DIG__: Int = 64
+
 val __LDBL_MAX_10_EXP__: Int = 4932
+
 val __LDBL_MAX_EXP__: Int = 16384
+
+
 val __LDBL_MIN_10_EXP__: Int = -4931
+
 val __LDBL_MIN_EXP__: Int = -16381
+
+
 val __POINTER_WIDTH__: Int = 64
+
 val __BIGGEST_ALIGNMENT__: Int = 16
+
 val __WINT_UNSIGNED__: Int = 1
+
 val __UINT8_MAX__: Int = 255
+
 val __INT8_MAX__: Int = 127
+
 val __UINT16_MAX__: Int = 65535
+
 val __INT16_MAX__: Int = 32767
+
 val __UINT32_MAX__: Int = -1
+
 val __INT32_MAX__: Int = 2147483647
+
 val __UINT64_MAX__: Long = -1
+
 val __INT64_MAX__: Long = 9223372036854775807
+
 val __INT_LEAST8_MAX__: Int = 127
+
 val __UINT_LEAST8_MAX__: Int = 255
+
 val __INT_LEAST16_MAX__: Int = 32767
+
 val __UINT_LEAST16_MAX__: Int = 65535
+
 val __INT_LEAST32_MAX__: Int = 2147483647
+
 val __UINT_LEAST32_MAX__: Int = -1
+
 val __INT_LEAST64_MAX__: Long = 9223372036854775807
+
 val __UINT_LEAST64_MAX__: Long = -1
+
 val __INT_FAST8_MAX__: Int = 127
+
 val __UINT_FAST8_MAX__: Int = 255
+
 val __INT_FAST16_MAX__: Int = 32767
+
 val __UINT_FAST16_MAX__: Int = 65535
+
 val __INT_FAST32_MAX__: Int = 2147483647
+
 val __UINT_FAST32_MAX__: Int = -1
+
 val __INT_FAST64_MAX__: Long = 9223372036854775807
+
 val __UINT_FAST64_MAX__: Long = -1
+
 val __FINITE_MATH_ONLY__: Int = 0
+
 val __GNUC_STDC_INLINE__: Int = 1
+
 val __GCC_ATOMIC_TEST_AND_SET_TRUEVAL: Int = 1
+
 val __GCC_ATOMIC_BOOL_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR16_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_CHAR32_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_WCHAR_T_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_SHORT_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_INT_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_LONG_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_LLONG_LOCK_FREE: Int = 2
+
 val __GCC_ATOMIC_POINTER_LOCK_FREE: Int = 2
+
 val __NO_INLINE__: Int = 1
+
 val __FLT_EVAL_METHOD__: Int = 0
+
 val __FLT_RADIX__: Int = 2
+
 val __DECIMAL_DIG__: Int = 21
+
 val __amd64__: Int = 1
+
 val __amd64: Int = 1
+
 val __x86_64: Int = 1
+
 val __x86_64__: Int = 1
+
 val __k8: Int = 1
+
 val __k8__: Int = 1
+
 val __tune_k8__: Int = 1
+
 val __NO_MATH_INLINES: Int = 1
+
 val __FXSR__: Int = 1
+
 val __SSE2__: Int = 1
+
 val __SSE2_MATH__: Int = 1
+
 val __SSE__: Int = 1
+
 val __SSE_MATH__: Int = 1
+
 val __MMX__: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4: Int = 1
+
 val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8: Int = 1
+
 val unix: Int = 1
+
 val __unix: Int = 1
+
 val __unix__: Int = 1
+
 val linux: Int = 1
+
 val __linux: Int = 1
+
 val __linux__: Int = 1
+
 val __gnu_linux__: Int = 1
+
 val __ELF__: Int = 1
+
 val __FLOAT128__: Int = 1
+
 val __STDC__: Int = 1
+
 val __STDC_HOSTED__: Int = 1
+
 val __STDC_VERSION__: Long = 201112
+
 val __STDC_UTF_16__: Int = 1
+
 val __STDC_UTF_32__: Int = 1
+
 val _POSIX_SOURCE: Int = 1
+
 val _MATH_H: Int = 1
+
 val _FEATURES_H: Int = 1
+
 val __USE_ISOC11: Int = 1
+
 val __USE_ISOC99: Int = 1
+
 val __USE_ISOC95: Int = 1
+
 val __USE_POSIX: Int = 1
+
 val __USE_FORTIFY_LEVEL: Int = 0
+
 val _STDC_PREDEF_H: Int = 1
+
 val __STDC_IEC_559__: Int = 1
+
 val __STDC_IEC_559_COMPLEX__: Int = 1
+
 val __STDC_ISO_10646__: Long = 201103
+
 val __STDC_NO_THREADS__: Int = 1
+
 val __GNU_LIBRARY__: Int = 6
+
 val __GLIBC__: Int = 2
+
 val __GLIBC_MINOR__: Int = 19
+
 val _SYS_CDEFS_H: Int = 1
+
 val __WORDSIZE: Int = 64
+
 val __WORDSIZE_TIME64_COMPAT32: Int = 1
+
 val __SYSCALL_WORDSIZE: Int = 64
+
 val HUGE_VAL: Double = bitsToDouble(9218868437227405312) /* == Infinity */
+
 val HUGE_VALF: Float = bitsToFloat(2139095040) /* == Infinity */
+
+
 val INFINITY: Float = bitsToFloat(2139095040) /* == Infinity */
+
 val NAN: Float = bitsToFloat(2143289344) /* == NaN */
+
 val _MATH_H_MATHDEF: Int = 1
+
 val FP_ILOGB0: Int = -2147483648
+
 val FP_ILOGBNAN: Int = -2147483648
+
 val __MATH_DECLARE_LDOUBLE: Int = 1
+
 val FP_NAN: Int = 0
+
 val FP_INFINITE: Int = 1
+
 val FP_ZERO: Int = 2
+
 val FP_SUBNORMAL: Int = 3
+
 val FP_NORMAL: Int = 4
+
 val MATH_ERRNO: Int = 1
+
 val MATH_ERREXCEPT: Int = 2
+
 val math_errhandling: Int = 3
 
 
@@ -1019,52 +1281,4 @@ typealias float_t = Float
 
 typealias double_tVar = DoubleVarOf<double_t>
 typealias double_t = Double
-
-@SymbolName("kni_math_frexp")
-private external fun kni_frexp(__x: Double, __exponent: NativePtr): Double
-
-@SymbolName("kni_math___frexp")
-private external fun kni___frexp(__x: Double, __exponent: NativePtr): Double
-
-@SymbolName("kni_math_modf")
-private external fun kni_modf(__x: Double, __iptr: NativePtr): Double
-
-@SymbolName("kni_math___modf")
-private external fun kni___modf(__x: Double, __iptr: NativePtr): Double
-
-@SymbolName("kni_math_nan")
-private external fun kni_nan(__tagb: NativePtr): Double
-
-@SymbolName("kni_math___nan")
-private external fun kni___nan(__tagb: NativePtr): Double
-
-@SymbolName("kni_math_remquo")
-private external fun kni_remquo(__x: Double, __y: Double, __quo: NativePtr): Double
-
-@SymbolName("kni_math___remquo")
-private external fun kni___remquo(__x: Double, __y: Double, __quo: NativePtr): Double
-
-@SymbolName("kni_math_frexpf")
-private external fun kni_frexpf(__x: Float, __exponent: NativePtr): Float
-
-@SymbolName("kni_math___frexpf")
-private external fun kni___frexpf(__x: Float, __exponent: NativePtr): Float
-
-@SymbolName("kni_math_modff")
-private external fun kni_modff(__x: Float, __iptr: NativePtr): Float
-
-@SymbolName("kni_math___modff")
-private external fun kni___modff(__x: Float, __iptr: NativePtr): Float
-
-@SymbolName("kni_math_nanf")
-private external fun kni_nanf(__tagb: NativePtr): Float
-
-@SymbolName("kni_math___nanf")
-private external fun kni___nanf(__tagb: NativePtr): Float
-
-@SymbolName("kni_math_remquof")
-private external fun kni_remquof(__x: Float, __y: Float, __quo: NativePtr): Float
-
-@SymbolName("kni_math___remquof")
-private external fun kni___remquof(__x: Float, __y: Float, __quo: NativePtr): Float
 
