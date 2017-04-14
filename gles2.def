@@ -1,0 +1,4 @@
+headers = GLES2/gl2.h
+compilerOpts =
+excludedFunctions =
+compilerOpts.linux = -I/usr/include

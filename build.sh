@@ -4,7 +4,7 @@ DIR=.
 PATH=../kotlin-native/dist/bin:$PATH
 
 # -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system
-LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system"
+LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system -lGLESv2"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -24,4 +24,4 @@ COMPILER_ARGS=${!var} # add -opt for an optimized build.
 IFS=$'\n';SOURCE_FILES=(`find $DIR/src -name '*.kt'`)
 SOURCE_FILES=${SOURCE_FILES[*]}
 
-konanc $COMPILER_ARGS -target $TARGET $SOURCE_FILES -library sfml.kt.bc -library math.kt.bc -library opengl.kt.bc -linkerArgs "$LINKER_ARGS" -o shooter.kexe || exit 1
+konanc $COMPILER_ARGS -target $TARGET $SOURCE_FILES -library sfml.kt.bc -library math.kt.bc -library gles2.kt.bc -linkerArgs "$LINKER_ARGS" -o shooter.kexe || exit 1

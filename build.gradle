@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    libsfml {
+        defFile 'sfml.def'
+        includeDirs '/usr/local/lib', '/usr/include', '/opt/local/include', '/usr/local/opt/include'
+    }
+
+    libmath {
+        defFile 'math.def'
+    }
+
+    libopengl {
+        defFile 'opengl.def'
+        includeDirs '/usr/local/lib', '/usr/include', '/opt/local/include', '/usr/local/opt/include'
+    }
+}
+
+konanArtifacts {
+    shooter {
+        inputFiles project.fileTree('src')
+        useInterop 'libsfml'
+        useInterop 'libmath'
+        useInterop 'libopengl'
+        enableOptimization()
+        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system"
+    }
+}
+
+
+build {
+    doLast {
+        copy {
+            from compileKonanShooter.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}
