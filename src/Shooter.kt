@@ -6,6 +6,7 @@ import games.perses.sfml.sprite.Textures
 import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.time.Timer
+import gles2.GL_TRIANGLES
 import kotlinx.cinterop.memScoped
 import math.cos
 import math.sin
@@ -85,7 +86,10 @@ fun main(args: Array<String>) {
         val sprite = Sprites.create("data/img/smiley.png")
 
         if (window.isOpen()) {
-            val program = ShaderProgram<Any>(vertexShaderSource, fragmentShaderSource)
+            val program = ShaderProgram<Any>(GL_TRIANGLES, vertexShaderSource, fragmentShaderSource,
+              arrayOf()) { program, data ->
+
+            }
         }
 
         while (window.isOpen()) {

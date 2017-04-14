@@ -9,18 +9,26 @@ import kotlinx.cinterop.*
  * Time: 17:21
  */
 
+
 class ShaderProgram<T>(
+  val drawType: Int,
   vertexShaderSource: String,
-  fragmentShaderSource: String
+  fragmentShaderSource: String,
+  val vainfo: Array<VertextAttributeInfo>,
+  val setter: (program: ShaderProgram<T>, data: T) -> Unit
 ) {
+    val program: Int
     var vertex: Int
     var fragment: Int
+
+    var verticesBlockSize = 0
+    var drawLength = 0
 
     init {
         vertex = compileShader(vertexShaderSource, GL_VERTEX_SHADER)
         fragment = compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER)
 
-        val program: Int = glCreateProgram()
+        program = glCreateProgram()
 
         glAttachShader(program, vertex)
         glAttachShader(program, fragment)
@@ -35,8 +43,28 @@ class ShaderProgram<T>(
                 //println(webgl.getProgramInfoLog(shaderProgram))
                 throw IllegalStateException("Unable to compile shader program!")
             }
+        }
 
-            glUseProgram(program)
+        glUseProgram(program)
+
+        this.verticesBlockSize = 0
+
+        // set attribute locations...
+        for (info in vainfo.iterator()) {
+            info.location = glGetAttribLocation(program, info.locationName)
+            info.offset = verticesBlockSize
+
+            verticesBlockSize += info.numElements
+            //println("attrib: ${info.locationName}, info.location: ${info.location}, info.offset: ${info.offset}")
+        }
+
+        when (drawType) {
+            GL_TRIANGLES -> {
+                drawLength = verticesBlockSize * 3
+            }
+            else -> {
+                drawLength = verticesBlockSize
+            }
         }
     }
 
@@ -61,5 +89,47 @@ class ShaderProgram<T>(
 
         return result
     }
+
+
+    fun begin(attribBuffer: Int, userdata: T) {
+        glUseProgram(program)
+        glBindBuffer(GL_ARRAY_BUFFER, attribBuffer)
+
+        memScoped {
+            val pointer = alloc<IntVar>()
+
+            // set attribute locations...
+            for (info in vainfo.iterator()) {
+                pointer.value = info.offset * 4
+
+                glEnableVertexAttribArray(info.location)
+                glVertexAttribPointer(info.location,
+                  info.numElements,
+                  GL_FLOAT,
+                  0.toByte(),
+                  verticesBlockSize * 4,
+                  pointer.ptr)
+            }
+        }
+
+        setter(this, userdata)
+    }
+
+    fun end() {
+        for (info in vainfo.iterator()) {
+            glDisableVertexAttribArray(info.location);
+        }
+        glUseProgram(0)
+    }
+
+
+    fun getAttribLocation(location: String) = glGetAttribLocation(program, location)
+
+    fun getUniformLocation(location: String) = glGetUniformLocation(program, location)
+
+    fun setUniform1f(location: String, value: Float) { glUniform1f(getUniformLocation(location), value) }
+    fun setUniform4f(location: String, v1: Float, v2: Float, v3: Float, v4: Float) { glUniform4f(getUniformLocation(location), v1, v2, v3, v4) }
+    fun setUniform1i(location: String, value: Int) { glUniform1i(getUniformLocation(location), value) }
+    fun setUniformMatrix4fv(location: String, value: CValuesRef<FloatVar>) { glUniformMatrix4fv(getUniformLocation(location), 16, 0.toByte(), value) }
 
 }
