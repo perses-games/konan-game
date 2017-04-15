@@ -55,7 +55,7 @@ class ShaderProgram<T>(
             info.offset = verticesBlockSize
 
             verticesBlockSize += info.numElements
-            //println("attrib: ${info.locationName}, info.location: ${info.location}, info.offset: ${info.offset}")
+            println("attrib: ${info.locationName}, info.location: ${info.location}, info.numelements: ${info.numElements}, info.offset: ${info.offset}")
         }
 
         when (drawType) {
@@ -96,10 +96,9 @@ class ShaderProgram<T>(
         glBindBuffer(GL_ARRAY_BUFFER, attribBuffer)
 
         memScoped {
-            val pointer = alloc<IntVar>()
-
             // set attribute locations...
             for (info in vainfo.iterator()) {
+                val pointer = alloc<IntVar>()
                 pointer.value = info.offset * 4
 
                 glEnableVertexAttribArray(info.location)
@@ -117,11 +116,11 @@ class ShaderProgram<T>(
 
     fun end() {
         for (info in vainfo.iterator()) {
-            glDisableVertexAttribArray(info.location);
+            glDisableVertexAttribArray(info.location)
         }
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
         glUseProgram(0)
     }
-
 
     fun getAttribLocation(location: String) = glGetAttribLocation(program, location)
 
@@ -130,6 +129,6 @@ class ShaderProgram<T>(
     fun setUniform1f(location: String, value: Float) { glUniform1f(getUniformLocation(location), value) }
     fun setUniform4f(location: String, v1: Float, v2: Float, v3: Float, v4: Float) { glUniform4f(getUniformLocation(location), v1, v2, v3, v4) }
     fun setUniform1i(location: String, value: Int) { glUniform1i(getUniformLocation(location), value) }
-    fun setUniformMatrix4fv(location: String, value: CValuesRef<FloatVar>) { glUniformMatrix4fv(getUniformLocation(location), 16, 0.toByte(), value) }
+    fun setUniformMatrix4fv(location: String, value: CValuesRef<FloatVar>) { glUniformMatrix4fv(getUniformLocation(location), 1, 0.toByte(), value) }
 
 }

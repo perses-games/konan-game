@@ -33,29 +33,49 @@ class Window(
     private fun createWindow() {
         var window: CPointer<sfRenderWindow>? = null
 
-        if (fullscreen) {
-            window = sfRenderWindow_create(sfVideoMode_getDesktopMode(), title, sfFullscreen, null)
-        } else {
-            memScoped {
-                val videoMode = alloc<sfVideoMode>()
+        memScoped {
+            val windowContext = alloc<sfContextSettings>()
 
-                videoMode.width = width
-                videoMode.height = height
-                videoMode.bitsPerPixel = 24
+            windowContext.majorVersion = 2
+            windowContext.minorVersion = 0
+            windowContext.depthBits = 0
 
-                window = sfRenderWindow_create(videoMode.readValue(), title, style, null)
+            if (fullscreen) {
+                window = sfRenderWindow_create(sfVideoMode_getDesktopMode(), title, sfFullscreen, windowContext.readValue())
+            } else {
+                memScoped {
+                    val videoMode = alloc<sfVideoMode>()
+
+                    videoMode.width = width
+                    videoMode.height = height
+                    videoMode.bitsPerPixel = 24
+
+                    window = sfRenderWindow_create(videoMode.readValue(), title, style, windowContext.readValue())
+                }
             }
-        }
 
-        if (window != null) {
-            handle = (window as CPointer<sfRenderWindow>).pointed
-        } else {
-            throw IllegalStateException("Unable to create window!")
+            if (window != null) {
+                handle = (window as CPointer<sfRenderWindow>).pointed
+            } else {
+                throw IllegalStateException("Unable to create window!")
+            }
         }
     }
 
     fun clear() {
         sfRenderWindow_clear(getWindowHandle().ptr, clearColor)
+    }
+
+    fun resetGLStates() {
+        sfRenderWindow_resetGLStates(getWindowHandle().ptr)
+    }
+
+    fun pushGLStates() {
+        sfRenderWindow_pushGLStates(getWindowHandle().ptr)
+    }
+
+    fun popGLStates() {
+        sfRenderWindow_popGLStates(getWindowHandle().ptr)
     }
 
     fun draw(drawable: Drawable) {
@@ -95,5 +115,9 @@ class Window(
     fun disableVerticalSync() {
         sfRenderWindow_setVerticalSyncEnabled(getWindowHandle().ptr, 0)
     }
+
+    fun getView(): CPointer<sfView>? = sfRenderWindow_getDefaultView(getWindowHandle().ptr)
+
+    fun setView(view: CPointer<sfView>?) = sfRenderWindow_setView(getWindowHandle().ptr, view)
 }
 

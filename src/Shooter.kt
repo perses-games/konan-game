@@ -1,13 +1,16 @@
 
 import games.perses.sfml.Window
+import games.perses.sfml.math.Matrix4
 import games.perses.sfml.shader.ShaderProgram
+import games.perses.sfml.shader.ShaderProgramMesh
+import games.perses.sfml.shader.VertextAttributeInfo
 import games.perses.sfml.sprite.Sprites
 import games.perses.sfml.sprite.Textures
 import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.time.Timer
-import gles2.GL_TRIANGLES
-import kotlinx.cinterop.memScoped
+import gles2.*
+import kotlinx.cinterop.*
 import math.cos
 import math.sin
 import sfml.*
@@ -47,7 +50,8 @@ private val vertexShaderSource = """
 
         vec4 scaledBox = vec4(a_boundingBox, 1.0, 1.0) * scale(a_scale) * rotateZ(a_rotation);
 
-        gl_Position = u_projectionView * vec4(a_position + scaledBox.xy, 1.0, 1.0);
+        // u_projectionView *
+        gl_Position = vec4(a_position + scaledBox.xy, 0.0, 1.0);
     }
 """
 
@@ -60,10 +64,15 @@ private val fragmentShaderSource = """
     varying vec2 v_textCoord;
 
     void main(void) {
-        gl_FragColor = texture2D(u_sampler, v_textCoord);
+        //gl_FragColor = texture2D(u_sampler, v_textCoord);
+        gl_FragColor = vec4(100.0, 0.0, 0.0, 1.0);
     }
 """
 
+class TextureData(
+  val vMatrix: Matrix4,
+  val texture: Int
+)
 
 fun main(args: Array<String>) {
 
@@ -77,51 +86,130 @@ fun main(args: Array<String>) {
     sfMusic_play(music)
 
     memScoped {
-
         val window = Window("Test", 1024, 768)
 
         window.clearColor = sfColor_fromRGB(0, 0, 100)
-        //window.enableVerticalSync()
+        window.enableVerticalSync()
 
-        val sprite = Sprites.create("data/img/smiley.png")
+        val identityMatrix = Matrix4()
 
         if (window.isOpen()) {
-            val program = ShaderProgram<Any>(GL_TRIANGLES, vertexShaderSource, fragmentShaderSource,
-              arrayOf()) { program, data ->
+            val rect = alloc<sfFloatRect>()
+            rect.left = -100f
+            rect.top = 100f
+            rect.width = 200f
+            rect.height = 200f
 
-            }
-        }
+            //val view = sfView_createFromRect(rect.readValue())
+            val view = window.getView()
 
-        while (window.isOpen()) {
+            val sprite = Sprites.create("data/img/smiley.png")
 
-            window.pollEvents { event ->
-                when (event.type) {
-                    sfEventType.sfEvtClosed -> {
-                        window.close()
-                    }
-                    sfEventType.sfEvtKeyPressed -> {
-                        // println("Key: ${event.key.code}")
-                        if (event.key.code == 36) {
-                            window.close()
+            window.pushGLStates()
+
+            Gles2Test.init()
+            var running = true
+
+            while (running) {
+                window.pollEvents { event ->
+                    when (event.type) {
+                        sfEventType.sfEvtClosed -> {
+                            running = false
+                        }
+                        sfEventType.sfEvtKeyPressed -> {
+                            // println("Key: ${event.key.code}")
+                            if (event.key.code == 36) {
+                                running = false
+                            }
+                        }
+                        else -> {
+                            // ignore
                         }
                     }
-                    else -> {
-                        // ignore
-                    }
+
                 }
+
+                glClearColor(Timer.time % 1f, 0.0f, 0f, 0.1f)
+                glClear(GL_COLOR_BUFFER_BIT)
+
+                Gles2Test.render()
+                window.display()
+
+                Timer.tick()
             }
 
-            fpsDisplay.setText("FPS: ${Timer.fps}")
+            val vainfo = arrayOf(
+              VertextAttributeInfo("a_position", 2),
+              VertextAttributeInfo("a_boundingBox", 2),
+              VertextAttributeInfo("a_texCoord", 2),
+              VertextAttributeInfo("a_scale", 1),
+              VertextAttributeInfo("a_rotation", 1)
+            )
 
-            window.clear()
-            sprite.position.x = 40f
-            sprite.position.y = 30f
-            window.draw(sprite)
-            window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
-            window.draw(fpsDisplay)
-            window.display()
+            val program = ShaderProgram<TextureData>(
+              GL_TRIANGLES,
+              vertexShaderSource,
+              fragmentShaderSource,
+              vainfo
+            ) { program, data ->
+                //program.setUniform1i("u_sampler", 0)
+                program.setUniformMatrix4fv("u_projectionView", identityMatrix.matrix.toCValues())
+            }
 
-            Timer.tick()
+            val shaderProgramMesh = ShaderProgramMesh(program)
+
+            val textureData = TextureData(identityMatrix, 0)
+
+            window.popGLStates()
+            window.resetGLStates()
+            window.setView(view)
+
+            while (window.isOpen()) {
+
+                window.pollEvents { event ->
+                    when (event.type) {
+                        sfEventType.sfEvtClosed -> {
+                            window.close()
+                        }
+                        sfEventType.sfEvtKeyPressed -> {
+                            // println("Key: ${event.key.code}")
+                            if (event.key.code == 36) {
+                                window.close()
+                            }
+                        }
+                        else -> {
+                            // ignore
+                        }
+                    }
+
+                }
+
+                glClearColor(0.5f, 0.5f, 0f, 0.1f)
+                glClear(GL_COLOR_BUFFER_BIT)
+
+                window.pushGLStates()
+
+                shaderProgramMesh.queue(0f, 0f, -0.5f, -0.5f, 0f, 0f, 1f, 0f)
+                shaderProgramMesh.queue(0f, 0f,  0.5f, -0.5f, 1f, 0f, 1f, 0f)
+                shaderProgramMesh.queue(0f, 0f,  0.5f,  0.5f, 1f, 1f, 1f, 0f)
+
+                shaderProgramMesh.render(textureData)
+
+                window.popGLStates()
+                window.setView(view)
+
+                fpsDisplay.setText("FPS: ${Timer.fps}")
+
+                sprite.position.x = 40f
+                sprite.position.y = 30f
+                window.draw(sprite)
+                window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
+                window.draw(fpsDisplay)
+
+                window.display()
+
+                Timer.tick()
+            }
         }
 
         Sprites.destroyAll()
