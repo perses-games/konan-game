@@ -23,7 +23,7 @@ private val fragmentShaderSource2 = """
 
     void main(void) {
         //gl_FragColor = texture2D(u_sampler, v_textCoord);
-        gl_FragColor = vec4(0.0, 100.0, 0.0, 1.0);
+        gl_FragColor = vec4(0.0, 1.0, 0.5, 1.0);
     }
 """
 
@@ -55,14 +55,14 @@ object Gles2Test {
     fun createBuffer() {
         val dataPointer = data.getPointer(nativeHeap)
 
-        dataPointer[0] = -0.5f
-        dataPointer[1] = -0.5f
+        dataPointer[0] = -50f
+        dataPointer[1] = -50f
 
-        dataPointer[2] =  0.5f
-        dataPointer[3] = -0.5f
+        dataPointer[2] =  50f
+        dataPointer[3] = -50f
 
-        dataPointer[4] =  0.5f
-        dataPointer[5] =  0.5f
+        dataPointer[4] =  50f
+        dataPointer[5] =  50f
 
         memScoped {
             val bufferRef = alloc<GLuintVar>()
@@ -87,7 +87,7 @@ object Gles2Test {
         glAttachShader(program, vertex)
         glAttachShader(program, fragment)
 
-        glBindAttribLocation(program, 0, "a_position")
+        //glBindAttribLocation(program, 0, "a_position")
 
         glLinkProgram(program)
 
@@ -135,8 +135,8 @@ object Gles2Test {
 
             glUseProgram(program)
             glBindBuffer(GL_ARRAY_BUFFER, buffer)
-            glVertexAttribPointer(position, 2, GL_FLOAT, 0.toByte(), 0, pointer.ptr)
             glEnableVertexAttribArray(position)
+            glVertexAttribPointer(position, 2, GL_FLOAT, 0.toByte(), 0, pointer.ptr)
             glDrawArrays(GL_TRIANGLES, 0, 3)
             glDisableVertexAttribArray(position)
             glUseProgram(0)

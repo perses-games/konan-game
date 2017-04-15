@@ -9,8 +9,13 @@ import games.perses.sfml.sprite.Textures
 import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.time.Timer
-import gles2.*
-import kotlinx.cinterop.*
+import gles2.GL_COLOR_BUFFER_BIT
+import gles2.GL_TRIANGLES
+import gles2.glClear
+import gles2.glClearColor
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.toCValues
 import math.cos
 import math.sin
 import sfml.*
@@ -89,7 +94,7 @@ fun main(args: Array<String>) {
         val window = Window("Test", 1024, 768)
 
         window.clearColor = sfColor_fromRGB(0, 0, 100)
-        window.enableVerticalSync()
+        //window.enableVerticalSync()
 
         val identityMatrix = Matrix4()
 
@@ -104,8 +109,6 @@ fun main(args: Array<String>) {
             val view = window.getView()
 
             val sprite = Sprites.create("data/img/smiley.png")
-
-            window.pushGLStates()
 
             Gles2Test.init()
             var running = true
@@ -160,21 +163,21 @@ fun main(args: Array<String>) {
 
             val textureData = TextureData(identityMatrix, 0)
 
-            window.popGLStates()
             window.resetGLStates()
             window.setView(view)
 
-            while (window.isOpen()) {
+            running = true
+            while (running) {
 
                 window.pollEvents { event ->
                     when (event.type) {
                         sfEventType.sfEvtClosed -> {
-                            window.close()
+                            running = false
                         }
                         sfEventType.sfEvtKeyPressed -> {
                             // println("Key: ${event.key.code}")
                             if (event.key.code == 36) {
-                                window.close()
+                                running = false
                             }
                         }
                         else -> {
@@ -187,15 +190,16 @@ fun main(args: Array<String>) {
                 glClearColor(0.5f, 0.5f, 0f, 0.1f)
                 glClear(GL_COLOR_BUFFER_BIT)
 
-                window.pushGLStates()
-
+/*
                 shaderProgramMesh.queue(0f, 0f, -0.5f, -0.5f, 0f, 0f, 1f, 0f)
                 shaderProgramMesh.queue(0f, 0f,  0.5f, -0.5f, 1f, 0f, 1f, 0f)
                 shaderProgramMesh.queue(0f, 0f,  0.5f,  0.5f, 1f, 1f, 1f, 0f)
 
                 shaderProgramMesh.render(textureData)
 
-                window.popGLStates()
+                glActiveTexture(GL_TEXTURE0)
+*/
+                window.resetGLStates()
                 window.setView(view)
 
                 fpsDisplay.setText("FPS: ${Timer.fps}")
@@ -210,6 +214,7 @@ fun main(args: Array<String>) {
 
                 Timer.tick()
             }
+            window.close()
         }
 
         Sprites.destroyAll()

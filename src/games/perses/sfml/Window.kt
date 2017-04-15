@@ -36,8 +36,8 @@ class Window(
         memScoped {
             val windowContext = alloc<sfContextSettings>()
 
-            windowContext.majorVersion = 2
-            windowContext.minorVersion = 0
+            windowContext.majorVersion = 3
+            windowContext.minorVersion = 2
             windowContext.depthBits = 0
 
             if (fullscreen) {
