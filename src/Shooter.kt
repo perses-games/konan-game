@@ -15,6 +15,7 @@ import gles2.glClear
 import gles2.glClearColor
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toCValues
 import math.cos
 import math.sin
@@ -190,12 +191,6 @@ fun main(args: Array<String>) {
                 glClearColor(0.5f, 0.5f, 0f, 0.1f)
                 glClear(GL_COLOR_BUFFER_BIT)
 
-                shaderProgramMesh.queue(0f, 0f, -0.5f, -0.5f, 0f, 0f, 1f, 0f)
-                shaderProgramMesh.queue(0f, 0f,  0.5f, -0.5f, 1f, 0f, 1f, 0f)
-                shaderProgramMesh.queue(0f, 0f,  0.5f,  0.5f, 1f, 1f, 1f, 0f)
-
-                shaderProgramMesh.render(textureData)
-
 //                glActiveTexture(GL_TEXTURE0)
                 window.resetGLStates()
                 window.setView(view)
@@ -207,6 +202,14 @@ fun main(args: Array<String>) {
                 window.draw(sprite)
                 window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
                 window.draw(fpsDisplay)
+
+                sfTexture_bind(sprite.texture.handle.ptr)
+
+                shaderProgramMesh.queue(0f, 0f, -0.5f, -0.5f, 0f, 0f, 1f, 0f)
+                shaderProgramMesh.queue(0f, 0f,  0.5f, -0.5f, 1f, 0f, 1f, 0f)
+                shaderProgramMesh.queue(0f, 0f,  0.5f,  0.5f, 1f, 1f, 1f, 0f)
+
+                shaderProgramMesh.render(textureData)
 
                 window.display()
 

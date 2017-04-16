@@ -9,6 +9,7 @@ import kotlinx.cinterop.*
  * Time: 17:21
  */
 
+class EmptyClass(override val rawPtr: NativePtr) : CPointed
 
 class ShaderProgram<T>(
   val drawType: Int,
@@ -106,7 +107,7 @@ class ShaderProgram<T>(
                   GL_FLOAT,
                   0.toByte(),
                   verticesBlockSize * 4,
-                  natOffset as COpaquePointer)
+                  interpretCPointer<EmptyClass>(natOffset))
             }
         }
 
