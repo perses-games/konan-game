@@ -1,5 +1,6 @@
 package games.perses.sfml.texture
 
+import games.perses.sfml.View
 import games.perses.sfml.math.Matrix4
 import games.perses.sfml.shader.ShaderProgram
 import games.perses.sfml.shader.ShaderProgramMesh
@@ -54,8 +55,7 @@ private val vertexShaderSource = """
 
         vec4 scaledBox = vec4(a_boundingBox, 1.0, 1.0) * scale(a_scale) * rotateZ(a_rotation);
 
-        // u_projectionView *
-        gl_Position = vec4(a_position + scaledBox.xy, 0.0, 1.0);
+        gl_Position = u_projectionView * vec4(a_position + scaledBox.xy, -2f, 1.0);
     }
 """
 
@@ -79,13 +79,14 @@ class TextureData(
 
 class TextureMesh(
   val filename: String,
-  var matrix: Matrix4,
+  matrix: Matrix4,
   val glTexture: sfTexture,
   val shaderProgram: ShaderProgram<TextureData>,
   val width: Int,
   val height: Int
 ) {
     val shaderProgramMesh: ShaderProgramMesh<TextureData> = ShaderProgramMesh(shaderProgram)
+    val data: TextureData = TextureData(matrix, glTexture)
     val left = -width / 2f
     val right = width / 2f
     val bottom = -height / 2f
@@ -121,18 +122,19 @@ class TextureMesh(
         glActiveTexture(GL_TEXTURE0)
         sfTexture_bind(glTexture.ptr)
 
-        shaderProgramMesh.render(TextureData(matrix, glTexture))
+        shaderProgramMesh.render(data)
     }
 }
 
 object Textures {
     var textures = HashMap<String, TextureMesh>()
     val shaderProgram: ShaderProgram<TextureData>
+    val matrix: Matrix4 = Matrix4()
 
     init {
         val setter = { program: ShaderProgram<TextureData>, data: TextureData ->
             program.setUniform1i("u_sampler", 0)
-            //program.setUniformMatrix4fv("u_projectionView", data.vMatrix.matrix)
+            program.setUniformMatrix4fv("u_projectionView", View.matrix.getCValues()) //data.vMatrix.getCValues())
         }
 
         val vainfo = arrayOf(
@@ -154,7 +156,7 @@ object Textures {
             val size: CValue<sfVector2u> = sfTexture_getSize(sfTxt)
             size.useContents {
                 println("Texture $filename -> $x, $y")
-                result = TextureMesh(filename, Matrix4(), sfTxt.pointed, shaderProgram, x, y)
+                result = TextureMesh(filename, matrix, sfTxt.pointed, shaderProgram, x, y)
             }
 
         }

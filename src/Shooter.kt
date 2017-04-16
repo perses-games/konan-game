@@ -1,6 +1,8 @@
 
+import games.perses.sfml.Events
+import games.perses.sfml.View
 import games.perses.sfml.Window
-import games.perses.sfml.math.Matrix4
+import games.perses.sfml.sprite.Sprite
 import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.texture.Textures
@@ -10,6 +12,7 @@ import gles2.glClear
 import gles2.glClearColor
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.readValue
 import math.cos
 import math.sin
 import sfml.*
@@ -33,52 +36,44 @@ fun main(args: Array<String>) {
         window.clearColor = sfColor_fromRGB(0, 0, 100)
         //window.enableVerticalSync()
 
-        val identityMatrix = Matrix4()
-
         if (window.isOpen()) {
             val rect = alloc<sfFloatRect>()
-            rect.left = -100f
-            rect.top = 100f
-            rect.width = 200f
-            rect.height = 200f
+            rect.left = -500f
+            rect.top = -500f
+            rect.width = 1000f
+            rect.height = 1000f
 
-            //val view = sfView_createFromRect(rect.readValue())
-            val view = window.getView()
+            val view = sfView_createFromRect(rect.readValue())
+            //val view = window.getView()
 
+            //Textures.matrix.setOrthographicProjection(-5f, 5f, -5f, 5f, -3f, 1f)
             val smiley = Textures.getOrLoad("data/img/smiley.png")
 
-            var running = true
-            while (running) {
+            View.setToWidth(2000)
+            Textures.matrix.setOrthographicProjection(-5f, 5f, -5f, 5f, -5f, 5f)
+            //Textures.matrix.setPerspectiveProjection(90f, window.windowWidth / window.windowHeight.toFloat(), 1f, 100f)
+            //Textures.matrix.rotateX(Timer.time)
+            val sprites = ArrayList<Sprite>()
 
-                window.pollEvents { event ->
-                    when (event.type) {
-                        sfEventType.sfEvtClosed -> {
-                            running = false
-                        }
-                        sfEventType.sfEvtKeyPressed -> {
-                            // println("Key: ${event.key.code}")
-                            if (event.key.code == 36) {
-                                running = false
-                            }
-                        }
-                        else -> {
-                            // ignore
-                        }
-                    }
-                }
+            for (index in 1..100) {
+                val x = rand() % 2000 - 1000f
+                val y = rand() % 2000 - 1000f
+                sprites.add(Sprite(smiley, x, y, 0.1f))
+            }
+
+            while (Events.running) {
+                window.pollEvents(Events::handleEvent)
 
                 glClearColor(0.5f, 0.5f, 0f, 0.1f)
                 glClear(GL_COLOR_BUFFER_BIT)
 
                 window.resetGLStates()
-                window.setView(view)
+                window.setView(View.view)
 
                 fpsDisplay.setText("FPS: ${Timer.fps}")
 
-                for (index in 0..100) {
-                    val x = rand() % 1000 / 500f -1f
-                    val y = rand() % 1000 / 500f -1f
-                    smiley.queueDraw(x, y, (0.0001f + sin(Timer.time.toDouble()) * 0.00005f).toFloat(), Timer.time)
+                for (sprite in sprites) {
+                    sprite.render()
                 }
                 smiley.render()
 
@@ -86,7 +81,7 @@ fun main(args: Array<String>) {
                 window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
                 window.draw(fpsDisplay)
 
-                smiley.queueDraw(0f, 0f, (0.0005f + sin(Timer.time.toDouble()) * 0.00025f).toFloat(), Timer.time)
+                smiley.queueDraw(-200f, -200f, (0.50f + sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
 
                 smiley.render()
 

@@ -1,5 +1,8 @@
 package games.perses.sfml.math
 
+import gles2.GLfloatVar
+import kotlinx.cinterop.CValuesRef
+import kotlinx.cinterop.toCValues
 import math.cos
 import math.sin
 import math.tan
@@ -30,7 +33,9 @@ class Matrix4 {
         return matrix
     }
 
-    //fun getFloat32Array() = Float32Array(get().toTypedArray())
+    fun getCValues(): CValuesRef<GLfloatVar> {
+        return matrix.toCValues()
+    }
 
     fun set(values: FloatArray) {
         if (values.size != 16) {

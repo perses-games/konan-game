@@ -61,6 +61,7 @@ class Window(
 
                 videoMode.useContents {
                     glViewport(0, 0, width, height)
+                    View.resize(width, height)
                 }
             } else {
                 throw IllegalStateException("Unable to create window!")
