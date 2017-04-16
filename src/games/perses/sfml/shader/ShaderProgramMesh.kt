@@ -17,7 +17,6 @@ class ShaderProgramMesh<T>(
 ) {
     val bufferSize = 20000 - (20000 % shaderProgram.drawLength)
     val data : CValuesRef<FloatVar> = nativeHeap.allocArray<FloatVar>(bufferSize)
-    //val data2 = FloatArray(20000 - (20000 % shaderProgram.drawLength))
     var currentIndex: Int = 0
     var attribBuffer: Int = 0
     var counter = 0
@@ -72,8 +71,6 @@ class ShaderProgramMesh<T>(
             shaderProgram.begin(attribBuffer, userdata)
 
             glBufferSubData(GL_ARRAY_BUFFER, 0, (currentIndex * 4).toLong(), data.getPointer(nativeHeap))
-            //glBufferData(GL_ARRAY_BUFFER, (currentIndex * 4).toLong(), data.getPointer(nativeHeap), GL_DYNAMIC_DRAW)
-            // glBufferData(GL_ARRAY_BUFFER, (currentIndex * 4).toLong(), data2.toCValues().getPointer(nativeHeap), GL_DYNAMIC_DRAW)
             // println("Draw arrays $currentIndex / ${shaderProgram.verticesBlockSize} = ${currentIndex / shaderProgram.verticesBlockSize}")
             glDrawArrays(shaderProgram.drawType, 0, (currentIndex / shaderProgram.verticesBlockSize))
             currentIndex = 0
