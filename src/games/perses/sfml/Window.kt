@@ -1,5 +1,6 @@
 package games.perses.sfml
 
+import gles2.glViewport
 import kotlinx.cinterop.*
 import sfml.*
 
@@ -9,15 +10,15 @@ import sfml.*
  * Time: 12:25
  */
 
-
 class Window(
   val title: String,
   val width: Int,
   val height: Int,
-  val style: Int = sfDefaultStyle,
+  val style: Int = sfFullscreen,
   var fullscreen: Boolean = false
 ) {
 
+    var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
     val event = nativeHeap.alloc<sfEvent>()
     var handle: sfRenderWindow? = null
     var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
@@ -25,6 +26,18 @@ class Window(
     constructor(title: String): this(title, 800, 600, fullscreen = true)
 
     init {
+        if (!fullscreen) {
+            memScoped {
+                val vm = alloc<sfVideoMode>()
+
+                vm.width = width
+                vm.height = height
+                vm.bitsPerPixel = 24
+
+                videoMode = vm.readValue()
+            }
+        }
+
         createWindow()
     }
 
@@ -39,24 +52,16 @@ class Window(
             windowContext.majorVersion = 2
             windowContext.minorVersion = 0
             windowContext.depthBits = 0
-            windowContext.attributeFlags = sfContextDebug
+            // windowContext.attributeFlags = sfContextDebug
 
-            if (fullscreen) {
-                window = sfRenderWindow_create(sfVideoMode_getDesktopMode(), title, sfFullscreen, windowContext.readValue())
-            } else {
-                memScoped {
-                    val videoMode = alloc<sfVideoMode>()
-
-                    videoMode.width = width
-                    videoMode.height = height
-                    videoMode.bitsPerPixel = 24
-
-                    window = sfRenderWindow_create(videoMode.readValue(), title, style, windowContext.readValue())
-                }
-            }
+            window = sfRenderWindow_create(videoMode, title, style, windowContext.readValue())
 
             if (window != null) {
                 handle = (window as CPointer<sfRenderWindow>).pointed
+
+                videoMode.useContents {
+                    glViewport(0, 0, width, height)
+                }
             } else {
                 throw IllegalStateException("Unable to create window!")
             }

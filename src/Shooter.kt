@@ -13,6 +13,7 @@ import kotlinx.cinterop.memScoped
 import math.cos
 import math.sin
 import sfml.*
+import stdio.rand
 
 
 fun main(args: Array<String>) {
@@ -27,7 +28,7 @@ fun main(args: Array<String>) {
     sfMusic_play(music)
 
     memScoped {
-        val window = Window("Test") //, 1024, 768)
+        val window = Window("Test", 1024, 768, style = sfDefaultStyle)
 
         window.clearColor = sfColor_fromRGB(0, 0, 100)
         //window.enableVerticalSync()
@@ -75,7 +76,9 @@ fun main(args: Array<String>) {
                 fpsDisplay.setText("FPS: ${Timer.fps}")
 
                 for (index in 0..100) {
-                    smiley.queueDraw(index / 50f - 1f, index % 10f / 5f - 1f, (0.1f + sin(Timer.time.toDouble()) * 0.05f).toFloat(), Timer.time)
+                    val x = rand() % 1000 / 500f -1f
+                    val y = rand() % 1000 / 500f -1f
+                    smiley.queueDraw(x, y, (0.0001f + sin(Timer.time.toDouble()) * 0.00005f).toFloat(), Timer.time)
                 }
                 smiley.render()
 
@@ -83,7 +86,7 @@ fun main(args: Array<String>) {
                 window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
                 window.draw(fpsDisplay)
 
-                smiley.queueDraw(0f, 0f, (0.5f + sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
+                smiley.queueDraw(0f, 0f, (0.0005f + sin(Timer.time.toDouble()) * 0.00025f).toFloat(), Timer.time)
 
                 smiley.render()
 

@@ -1,3 +1,0 @@
-headers = math.h
-compilerOpts = -D_POSIX_SOURCE
-excludedFunctions =

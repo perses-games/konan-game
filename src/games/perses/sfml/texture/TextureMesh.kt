@@ -4,11 +4,13 @@ import games.perses.sfml.math.Matrix4
 import games.perses.sfml.shader.ShaderProgram
 import games.perses.sfml.shader.ShaderProgramMesh
 import games.perses.sfml.shader.VertextAttributeInfo
-import games.perses.sfml.texture.Textures.textures
 import gles2.GL_TEXTURE0
 import gles2.GL_TRIANGLES
 import gles2.glActiveTexture
-import kotlinx.cinterop.*
+import kotlinx.cinterop.CValue
+import kotlinx.cinterop.pointed
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.useContents
 import sfml.*
 
 /**
@@ -150,11 +152,14 @@ object Textures {
             val sfTxt = sfTexture_createFromFile(filename, null) ?: throw IllegalStateException("Couldn't find texture file: $filename")
             sfTexture_setSmooth(sfTxt, 1)
             val size: CValue<sfVector2u> = sfTexture_getSize(sfTxt)
+            size.useContents {
+                println("Texture $filename -> $x, $y")
+                result = TextureMesh(filename, Matrix4(), sfTxt.pointed, shaderProgram, x, y)
+            }
 
-            result = TextureMesh(filename, Matrix4(), sfTxt.pointed, shaderProgram, 1, 1)
         }
 
-        return result
+        return result ?: throw IllegalStateException("Unable to load texture $filename")
     }
 
     fun destroy(filename: String) {
