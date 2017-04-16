@@ -23,7 +23,7 @@ private val fragmentShaderSource2 = """
 
     void main(void) {
         //gl_FragColor = texture2D(u_sampler, v_textCoord);
-        gl_FragColor = vec4(0.0, 1.0, 0.5, 1.0);
+        gl_FragColor = vec4(0.0, 0.0, 0.5, 1.0);
     }
 """
 
@@ -38,6 +38,7 @@ object Gles2Test {
 
     val bufferSize = 6
     val data : CValuesRef<FloatVar> = nativeHeap.allocArray<FloatVar>(6)
+    val data2 = FloatArray(6)
 
     fun init() {
         println("GL_VERSION: ${glGetString(GL_VERSION)?.toKString()}")
@@ -50,6 +51,8 @@ object Gles2Test {
         println("program: $program")
         println("position: $position")
         println("data: $data")
+        println("data2: $data2")
+        println("buffer: $buffer")
     }
 
     fun createBuffer() {
@@ -64,6 +67,17 @@ object Gles2Test {
         dataPointer[4] =  50f
         dataPointer[5] =  50f
 
+        data2[0] = -5f
+        data2[1] = -5f
+
+        data2[2] =  5f
+        data2[3] = -5f
+
+        data2[4] =  5f
+        data2[5] =  5f
+
+        val data3 = data2.toCValues().placeTo(nativeHeap)
+
         memScoped {
             val bufferRef = alloc<GLuintVar>()
 
@@ -71,9 +85,7 @@ object Gles2Test {
 
             buffer = bufferRef.value
             glBindBuffer(GL_ARRAY_BUFFER, buffer)
-            glBufferData(GL_ARRAY_BUFFER, (bufferSize * 4).toLong(), dataPointer, GL_STATIC_DRAW)
-            //glVertexAttribPointer(position, 2, GL_FLOAT, 0.toByte(), 0, pointer.ptr)
-            //glEnableVertexAttribArray(position)
+            glBufferData(GL_ARRAY_BUFFER, (bufferSize * 4).toLong(), data3, GL_STATIC_DRAW)
             glBindBuffer(GL_ARRAY_BUFFER, 0)
         }
     }
@@ -86,8 +98,6 @@ object Gles2Test {
 
         glAttachShader(program, vertex)
         glAttachShader(program, fragment)
-
-        //glBindAttribLocation(program, 0, "a_position")
 
         glLinkProgram(program)
 
@@ -136,7 +146,8 @@ object Gles2Test {
             glUseProgram(program)
             glBindBuffer(GL_ARRAY_BUFFER, buffer)
             glEnableVertexAttribArray(position)
-            glVertexAttribPointer(position, 2, GL_FLOAT, 0.toByte(), 0, pointer.ptr)
+            glVertexAttribPointer(position, 2, GL_FLOAT, 0.toByte(), 0, null)
+            glBufferData(GL_ARRAY_BUFFER, (bufferSize * 4).toLong(), data2.toCValues().getPointer(nativeHeap), GL_STATIC_DRAW)
             glDrawArrays(GL_TRIANGLES, 0, 3)
             glDisableVertexAttribArray(position)
             glUseProgram(0)

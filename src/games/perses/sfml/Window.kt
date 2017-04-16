@@ -36,9 +36,10 @@ class Window(
         memScoped {
             val windowContext = alloc<sfContextSettings>()
 
-            windowContext.majorVersion = 3
-            windowContext.minorVersion = 2
+            windowContext.majorVersion = 2
+            windowContext.minorVersion = 0
             windowContext.depthBits = 0
+            windowContext.attributeFlags = sfContextDebug
 
             if (fullscreen) {
                 window = sfRenderWindow_create(sfVideoMode_getDesktopMode(), title, sfFullscreen, windowContext.readValue())

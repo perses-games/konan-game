@@ -69,8 +69,8 @@ private val fragmentShaderSource = """
     varying vec2 v_textCoord;
 
     void main(void) {
-        //gl_FragColor = texture2D(u_sampler, v_textCoord);
-        gl_FragColor = vec4(100.0, 0.0, 0.0, 1.0);
+        gl_FragColor = texture2D(u_sampler, v_textCoord);
+        gl_FragColor.r = 1.0;
     }
 """
 
@@ -94,7 +94,7 @@ fun main(args: Array<String>) {
         val window = Window("Test", 1024, 768)
 
         window.clearColor = sfColor_fromRGB(0, 0, 100)
-        //window.enableVerticalSync()
+        window.enableVerticalSync()
 
         val identityMatrix = Matrix4()
 
@@ -190,15 +190,13 @@ fun main(args: Array<String>) {
                 glClearColor(0.5f, 0.5f, 0f, 0.1f)
                 glClear(GL_COLOR_BUFFER_BIT)
 
-/*
                 shaderProgramMesh.queue(0f, 0f, -0.5f, -0.5f, 0f, 0f, 1f, 0f)
                 shaderProgramMesh.queue(0f, 0f,  0.5f, -0.5f, 1f, 0f, 1f, 0f)
                 shaderProgramMesh.queue(0f, 0f,  0.5f,  0.5f, 1f, 1f, 1f, 0f)
 
                 shaderProgramMesh.render(textureData)
 
-                glActiveTexture(GL_TEXTURE0)
-*/
+//                glActiveTexture(GL_TEXTURE0)
                 window.resetGLStates()
                 window.setView(view)
 
