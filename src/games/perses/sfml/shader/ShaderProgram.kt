@@ -99,15 +99,13 @@ class ShaderProgram<T>(
         memScoped {
             // set attribute locations...
             for (info in vainfo.iterator()) {
-                val natOffset = nativeNullPtr.plus(info.offset * 4L)
-
                 glEnableVertexAttribArray(info.location)
                 glVertexAttribPointer(info.location,
                   info.numElements,
                   GL_FLOAT,
                   0.toByte(),
                   verticesBlockSize * 4,
-                  interpretCPointer<EmptyClass>(natOffset))
+                  (info.offset * 4L).toCPointer<CPointed>())
             }
         }
 
