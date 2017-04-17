@@ -1,6 +1,7 @@
 package games.perses.sfml
 
 import games.perses.sfml.math.Matrix4
+import gles2.glViewport
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
@@ -8,6 +9,7 @@ import kotlinx.cinterop.readValue
 import sfml.sfFloatRect
 import sfml.sfView
 import sfml.sfView_createFromRect
+import sfml.sfView_setViewport
 
 /**
  * Created by rnentjes on 16-4-17.
@@ -24,20 +26,22 @@ object View {
     var windowHeight: Int = 600
     var viewportWidth: Int = windowWidth
     var viewportHeight: Int = windowHeight
-    var aspectRatio: Float = windowWidth / windowHeight.toFloat()
+    var unitWidth: Int = windowWidth
+    var unitHeight: Int = windowHeight
+    var borderLeft: Int = 0
+    var borderTop: Int = 0
     var mode: ViewMode = ViewMode.NONE
-    var minAspectRatio: Float = 1f
-    var maxAspectRatio: Float = 1f
+    var aspectRatio: Float = windowWidth / windowHeight.toFloat()
+    var minAspectRatio: Float = 0.9f
+    var maxAspectRatio: Float = 1.1f
 
     val matrix = Matrix4()
     var view: CPointer<sfView>
     val rect = nativeHeap.alloc<sfFloatRect>()
+    val viewportRect = nativeHeap.alloc<sfFloatRect>()
 
       init {
-          rect.left = -400f
-          rect.top = -300f
-          rect.width = 800f
-          rect.height = 600f
+          updateViewport()
 
           view = sfView_createFromRect(rect.readValue()) ?: throw IllegalStateException("Unable to create view!")
       }
@@ -46,21 +50,26 @@ object View {
         this.windowWidth = width
         this.windowHeight = height
 
-        println("RESIZED $width, $height!")
-
         aspectRatio = windowWidth / windowHeight.toFloat()
+
+        println("RESIZED $aspectRatio -- $width, $height!")
 
         if (aspectRatio < minAspectRatio) {
             aspectRatio = minAspectRatio
 
-            windowHeight = (windowWidth / aspectRatio).toInt()
+            unitHeight = (windowWidth / aspectRatio).toInt()
+            unitWidth = windowWidth
         }
 
         if (aspectRatio > maxAspectRatio) {
             aspectRatio = maxAspectRatio
 
-            windowWidth = (windowHeight * aspectRatio).toInt()
+            unitHeight = windowHeight
+            unitWidth = (windowHeight * aspectRatio).toInt()
         }
+
+        borderLeft = (windowWidth - unitWidth) / 2
+        borderTop = (windowHeight - unitHeight) / 2
 
         when(mode) {
             ViewMode.NONE -> {
@@ -74,28 +83,40 @@ object View {
             }
         }
 
+        println("Set viewport to $aspectRatio -- $borderLeft, $borderTop, $windowWidth, $windowHeight (window: $width, $height)")
+        updateViewport()
         println("Set matrix to $viewportWidth, $viewportHeight")
         matrix.setOrthographicProjection(-viewportWidth / 2f, viewportWidth / 2f, viewportHeight / 2f, -viewportHeight / 2f, -5f, 5f)
-
-        rect.left = -viewportWidth / 2f
-        rect.top = -viewportHeight / 2f
-        rect.width = viewportWidth.toFloat()
-        rect.height = viewportHeight.toFloat()
-
-        view = sfView_createFromRect(rect.readValue()) ?: throw IllegalStateException("Unable to create view!")
     }
 
     fun setToWidth(width: Int) {
         viewportWidth = width
         mode = ViewMode.WIDTH
 
-        resize(width, windowHeight)
+        resize(windowWidth, windowHeight)
     }
 
     fun setToHeight(height: Int) {
         viewportHeight = height
         mode = ViewMode.HEIGHT
 
-        resize(windowWidth, height)
+        resize(windowWidth, windowHeight)
+    }
+
+    fun updateViewport() {
+        rect.left = -viewportWidth / 2f
+        rect.top = -viewportHeight / 2f
+        rect.width = viewportWidth.toFloat()
+        rect.height = viewportHeight.toFloat()
+
+        viewportRect.left = borderLeft.toFloat() / windowWidth
+        viewportRect.top = borderTop.toFloat() / windowHeight
+        viewportRect.width = unitWidth.toFloat() / windowWidth
+        viewportRect.height = unitHeight.toFloat() / windowHeight
+
+        view = sfView_createFromRect(rect.readValue()) ?: throw IllegalStateException("Unable to create view!")
+        sfView_setViewport(view, viewportRect.readValue())
+
+        glViewport(borderLeft, borderTop, unitWidth, unitHeight)
     }
 }

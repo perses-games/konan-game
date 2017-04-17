@@ -52,6 +52,7 @@ class Window(
             windowContext.majorVersion = 2
             windowContext.minorVersion = 0
             windowContext.depthBits = 0
+            windowContext.antialiasingLevel = 4
             // windowContext.attributeFlags = sfContextDebug
 
             window = sfRenderWindow_create(videoMode, title, style, windowContext.readValue())
@@ -60,7 +61,7 @@ class Window(
                 handle = (window as CPointer<sfRenderWindow>).pointed
 
                 videoMode.useContents {
-                    glViewport(0, 0, width, height)
+                    println("Resize from videoMode: $width, $height")
                     View.resize(width, height)
                 }
             } else {

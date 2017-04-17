@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     val fpsDisplay = Text(font, 20f, 10f, "FPS: 0", 76, 0.toByte(), 255.toByte(), 0.toByte())
 
     sfMusic_setLoop(music, 1)
-    sfMusic_play(music)
+    //sfMusic_play(music)
 
     memScoped {
         val window = Window("Test", 1024, 768, style = sfDefaultStyle)
@@ -37,22 +37,11 @@ fun main(args: Array<String>) {
         //window.enableVerticalSync()
 
         if (window.isOpen()) {
-            val rect = alloc<sfFloatRect>()
-            rect.left = -500f
-            rect.top = -500f
-            rect.width = 1000f
-            rect.height = 1000f
-
-            val view = sfView_createFromRect(rect.readValue())
-            //val view = window.getView()
-
-            //Textures.matrix.setOrthographicProjection(-5f, 5f, -5f, 5f, -3f, 1f)
             val smiley = Textures.getOrLoad("data/img/smiley.png")
 
             View.setToWidth(2000)
             Textures.matrix.setOrthographicProjection(-5f, 5f, -5f, 5f, -5f, 5f)
-            //Textures.matrix.setPerspectiveProjection(90f, window.windowWidth / window.windowHeight.toFloat(), 1f, 100f)
-            //Textures.matrix.rotateX(Timer.time)
+
             val sprites = ArrayList<Sprite>()
 
             for (index in 1..100) {
@@ -67,20 +56,21 @@ fun main(args: Array<String>) {
                 glClearColor(0.5f, 0.5f, 0f, 0.1f)
                 glClear(GL_COLOR_BUFFER_BIT)
 
-                window.resetGLStates()
-                window.setView(View.view)
 
-                fpsDisplay.setText("FPS: ${Timer.fps}")
-
+                View.updateViewport()
                 for (sprite in sprites) {
                     sprite.render()
                 }
                 smiley.render()
 
                 window.resetGLStates()
+                window.setView(View.view)
+
+                fpsDisplay.setText("FPS: ${Timer.fps}")
                 window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
                 window.draw(fpsDisplay)
 
+                View.updateViewport()
                 smiley.queueDraw(-200f, -200f, (0.50f + sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
 
                 smiley.render()
