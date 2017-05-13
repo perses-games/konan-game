@@ -26,3 +26,4 @@ IFS=$'\n';SOURCE_FILES=(`find $DIR/src -name '*.kt'`)
 SOURCE_FILES=${SOURCE_FILES[*]}
 
 konanc $COMPILER_ARGS -target $TARGET $SOURCE_FILES -library $IOP/sfml.kt.bc -library $IOP/math.kt.bc -library $IOP/gles2.kt.bc -library $IOP/stdio.kt.bc -linkerArgs "$LINKER_ARGS" -o shooter.kexe -opt || exit 1
+

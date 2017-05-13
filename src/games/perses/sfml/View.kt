@@ -59,13 +59,14 @@ object View {
 
             unitHeight = (windowWidth / aspectRatio).toInt()
             unitWidth = windowWidth
-        }
-
-        if (aspectRatio > maxAspectRatio) {
+        } else if (aspectRatio > maxAspectRatio) {
             aspectRatio = maxAspectRatio
 
             unitHeight = windowHeight
             unitWidth = (windowHeight * aspectRatio).toInt()
+        } else {
+            unitHeight = windowHeight
+            unitWidth = windowWidth
         }
 
         borderLeft = (windowWidth - unitWidth) / 2
