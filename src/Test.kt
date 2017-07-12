@@ -1,4 +1,6 @@
 
+import games.perses.math.Math
+import games.perses.rand.Rand
 import games.perses.sfml.Events
 import games.perses.sfml.View
 import games.perses.sfml.Window
@@ -7,17 +9,8 @@ import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.texture.Textures
 import games.perses.sfml.time.Timer
-import gles2.GL_COLOR_BUFFER_BIT
-import gles2.glClear
-import gles2.glClearColor
-import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.readValue
-import math.cos
-import math.sin
 import sfml.*
-import stdio.rand
-
 
 fun main(args: Array<String>) {
 
@@ -45,17 +38,13 @@ fun main(args: Array<String>) {
             val sprites = ArrayList<Sprite>()
 
             for (index in 1..100) {
-                val x = rand() % 2000 - 1000f
-                val y = rand() % 2000 - 1000f
+                val x = Rand.getInt() % 2000 - 1000f
+                val y = Rand.getInt() % 2000 - 1000f
                 sprites.add(Sprite(smiley, x, y, 0.1f))
             }
 
             while (Events.running) {
                 window.pollEvents(Events::handleEvent)
-
-                glClearColor(0.5f, 0.5f, 0f, 0.1f)
-                glClear(GL_COLOR_BUFFER_BIT)
-
 
                 View.updateViewport()
                 for (sprite in sprites) {
@@ -67,11 +56,11 @@ fun main(args: Array<String>) {
                 window.setView(View.view)
 
                 fpsDisplay.setText("FPS: ${Timer.fps}")
-                window.draw(helloKonan, 100f + sin(Timer.time.toDouble()).toFloat() * 50f, 100f + cos(Timer.time.toDouble()).toFloat() * 50f)
+                window.draw(helloKonan, 100f + Math.sin(Timer.time.toDouble()).toFloat() * 50f, 100f + Math.cos(Timer.time.toDouble()).toFloat() * 50f)
                 window.draw(fpsDisplay)
 
                 View.updateViewport()
-                smiley.queueDraw(-200f, -200f, (0.50f + sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
+                smiley.queueDraw(-200f, -200f, (0.50f + Math.sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
 
                 smiley.render()
 

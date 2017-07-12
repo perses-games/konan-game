@@ -7,45 +7,51 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.1"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.3"
     }
 }
 
 apply plugin: 'konan'
 
-konanInterop {
-    libsfml {
-        defFile 'sfml.def'
-        includeDirs '/usr/local/lib', '/usr/include', '/opt/local/include', '/usr/local/opt/include'
-    }
-
-    libmath {
-        defFile 'math.def'
-    }
-
-    libopengl {
-        defFile 'opengl.def'
-        includeDirs '/usr/local/lib', '/usr/include', '/opt/local/include', '/usr/local/opt/include'
-    }
-}
-
 konanArtifacts {
-    shooter {
+    test {
         inputFiles project.fileTree('src')
-        useInterop 'libsfml'
-        useInterop 'libmath'
-        useInterop 'libopengl'
+
+        library project.file('klib/sfml.klib')
+        library project.file('klib/math.klib')
+        library project.file('klib/gles2.klib')
+        library project.file('klib/stdio.klib')
+
         enableOptimization()
-        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system"
+
+        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system -lGL"
+    }
+
+    konanlib {
+        produce 'library'
+
+        inputFiles project.fileTree('src') {
+            exclude 'Test.kt'
+        }
+
+        library project.file('klib/sfml.klib')
+        library project.file('klib/math.klib')
+        library project.file('klib/gles2.klib')
+        library project.file('klib/stdio.klib')
+
+        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system -lGL"
     }
 }
-
 
 build {
     doLast {
         copy {
-            from compileKonanShooter.artifactPath
+            from compileKonanTest.artifactPath
             into projectDir.canonicalPath
+        }
+        copy {
+            from compileKonanKonanlib.artifactPath
+            into projectDir.canonicalPath + '/klib'
         }
     }
 }
