@@ -44,6 +44,7 @@ fun main(args: Array<String>) {
             }
 
             while (Events.running) {
+                window.clear()
                 window.pollEvents(Events::handleEvent)
 
                 View.updateViewport()

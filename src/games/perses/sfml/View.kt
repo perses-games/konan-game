@@ -52,7 +52,7 @@ object View {
 
         aspectRatio = windowWidth / windowHeight.toFloat()
 
-        println("RESIZED $aspectRatio -- $width, $height!")
+        //println("RESIZED $aspectRatio -- $width, $height!")
 
         if (aspectRatio < minAspectRatio) {
             aspectRatio = minAspectRatio
@@ -84,9 +84,9 @@ object View {
             }
         }
 
-        println("Set viewport to $aspectRatio -- $borderLeft, $borderTop, $windowWidth, $windowHeight (window: $width, $height)")
+        //println("Set viewport to $aspectRatio -- $borderLeft, $borderTop, $windowWidth, $windowHeight (window: $width, $height)")
         updateViewport()
-        println("Set matrix to $viewportWidth, $viewportHeight")
+        //println("Set matrix to $viewportWidth, $viewportHeight")
         matrix.setOrthographicProjection(-viewportWidth / 2f, viewportWidth / 2f, viewportHeight / 2f, -viewportHeight / 2f, -5f, 5f)
     }
 
