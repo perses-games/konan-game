@@ -9,8 +9,6 @@ import kotlinx.cinterop.*
  * Time: 17:21
  */
 
-class EmptyClass(override val rawPtr: NativePtr) : CPointed
-
 class ShaderProgram<T>(
   val drawType: Int,
   vertexShaderSource: String,
@@ -77,7 +75,7 @@ class ShaderProgram<T>(
             val size = alloc<GLintVar>()
             size.value = source.length // assume ascii
 
-            src.value = source.cstr.getPointer(nativeHeap)
+            src.value = source.cstr.getPointer(memScope)
             glShaderSource(result, 1, src.ptr, size.ptr)
             glCompileShader(result)
 
