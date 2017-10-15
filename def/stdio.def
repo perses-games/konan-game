@@ -1,3 +1,4 @@
 headers = stdlib.h
 compilerOpts = -D_POSIX_SOURCE
+linkerOpts = -L/usr/lib/x86_64-linux-gnu
 excludedFunctions =

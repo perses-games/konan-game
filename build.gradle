@@ -13,18 +13,39 @@ buildscript {
 
 apply plugin: 'konan'
 
+konanInterop {
+    stdio {
+        defFile project.file("def/stdio.def")
+        target 'linux'
+    }
+
+    sfml {
+        defFile project.file("def/sfml.def")
+        pkg 'sfml'
+        target 'linux'
+    }
+
+    math {
+        defFile project.file("def/math.def")
+        target 'linux'
+    }
+
+    gles2 {
+        defFile project.file("def/gles2.def")
+        target 'linux'
+    }
+}
+
 konanArtifacts {
     test {
         inputFiles project.fileTree('src')
 
-        library project.file('klib/sfml.klib')
-        library project.file('klib/math.klib')
-        library project.file('klib/gles2.klib')
-        library project.file('klib/stdio.klib')
+        useInterop "stdio"
+        useInterop "sfml"
+        useInterop "math"
+        useInterop "gles2"
 
         enableOptimization()
-
-        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system -lGL"
     }
 
     konanlib {
@@ -34,12 +55,10 @@ konanArtifacts {
             exclude 'Test.kt'
         }
 
-        library project.file('klib/sfml.klib')
-        library project.file('klib/math.klib')
-        library project.file('klib/gles2.klib')
-        library project.file('klib/stdio.klib')
-
-        linkerOpts "-L/usr/lib/x86_64-linux-gnu -LCSFML-2.4-osx-clang/lib -lcsfml-graphics -lcsfml-audio -lcsfml-window -lcsfml-network -lcsfml-system -lGL"
+        useInterop "stdio"
+        useInterop "sfml"
+        useInterop "math"
+        useInterop "gles2"
     }
 }
 

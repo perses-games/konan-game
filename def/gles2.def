@@ -1,4 +1,5 @@
 headers = GLES2/gl2.h
 compilerOpts =
+linkerOpts  = -lGL
 excludedFunctions =
 compilerOpts.linux = -I/usr/include
