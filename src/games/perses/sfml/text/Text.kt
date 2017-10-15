@@ -15,7 +15,7 @@ import sfml.*
  */
 
 class Font(
-  val filename: String
+  filename: String
 ) {
     val fontHandle = sfFont_createFromFile(filename)
 

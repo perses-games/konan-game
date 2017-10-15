@@ -74,10 +74,15 @@ fun main(args: Array<String>) {
 
         window.destroy()
 
+        Textures.destroyAll()
+
         sfMusic_destroy(music)
 
         helloKonan.destroy()
+        fpsDisplay.destroy()
         font.destroy()
+
+        Timer.destroy()
     }
 
 }

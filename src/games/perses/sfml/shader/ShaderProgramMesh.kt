@@ -16,7 +16,8 @@ class ShaderProgramMesh<T>(
   val shaderProgram: ShaderProgram<T>
 ) {
     val bufferSize = 20000 - (20000 % shaderProgram.drawLength)
-    val data : CValuesRef<FloatVar> = nativeHeap.allocArray<FloatVar>(bufferSize)
+    //val data : CValuesRef<FloatVar> = nativeHeap.allocArray<FloatVar>(bufferSize)
+    val data = nativeHeap.allocArray<FloatVar>(bufferSize)
     var currentIndex: Int = 0
     var attribBuffer: Int = 0
     var counter = 0
@@ -36,10 +37,8 @@ class ShaderProgramMesh<T>(
 
 
     fun queue(vararg vertices: Float) {
-        memScoped {
-            for (value in vertices) {
-                data.getPointer(memScope)[currentIndex++] = value
-            }
+        for (value in vertices) {
+            data[currentIndex++] = value
         }
 
         if (bufferFull()) {
@@ -49,10 +48,8 @@ class ShaderProgramMesh<T>(
     }
 
     fun queueArray(vertices: Array<Float>) {
-        memScoped {
-            for (index in 0..vertices.size - 1) {
-                data.getPointer(memScope)[currentIndex++] = vertices[index]
-            }
+        for (index in 0..vertices.size - 1) {
+            data[currentIndex++] = vertices[index]
         }
 
         if (bufferFull()) {
@@ -72,22 +69,18 @@ class ShaderProgramMesh<T>(
                 throw IllegalStateException("Number of vertices not a multiple of the attribute block size!")
             }
 
-            memScoped {
-                shaderProgram.begin(attribBuffer, userdata)
+            shaderProgram.begin(attribBuffer, userdata)
 
-                glBufferSubData(GL_ARRAY_BUFFER, 0, (currentIndex * 4).toLong(), data.getPointer(memScope))
-                // println("Draw arrays $currentIndex / ${shaderProgram.verticesBlockSize} = ${currentIndex / shaderProgram.verticesBlockSize}")
-                glDrawArrays(shaderProgram.drawType, 0, (currentIndex / shaderProgram.verticesBlockSize))
-                currentIndex = 0
+            glBufferSubData(GL_ARRAY_BUFFER, 0, (currentIndex * 4).toLong(), data)
+            // println("Draw arrays $currentIndex / ${shaderProgram.verticesBlockSize} = ${currentIndex / shaderProgram.verticesBlockSize}")
+            glDrawArrays(shaderProgram.drawType, 0, (currentIndex / shaderProgram.verticesBlockSize))
+            currentIndex = 0
 
-                shaderProgram.end()
-            }
+            shaderProgram.end()
         }
     }
 
     fun destroy() {
-        memScoped {
-            nativeHeap.free(data.getPointer(memScope).rawValue)
-        }
+        nativeHeap.free(data)
     }
 }
