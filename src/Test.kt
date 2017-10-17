@@ -1,32 +1,34 @@
 
 import games.perses.math.Math
 import games.perses.rand.Rand
+import games.perses.sfml.Cleanup
 import games.perses.sfml.Events
 import games.perses.sfml.View
 import games.perses.sfml.Window
+import games.perses.sfml.music.Music
 import games.perses.sfml.sprite.Sprite
 import games.perses.sfml.text.Font
 import games.perses.sfml.text.Text
 import games.perses.sfml.texture.Textures
 import games.perses.sfml.time.Timer
 import kotlinx.cinterop.memScoped
-import sfml.*
+import sfml.sfDefaultStyle
 
 fun main(args: Array<String>) {
 
-    val music = sfMusic_createFromFile("data/music/DST-TechnoBasic.ogg")
+    Music.load("data/music/DST-TechnoBasic.ogg")
 
     val font = Font("data/fonts/COMPUTERRobot.ttf")
     val helloKonan = Text(font, 50f, 50f, "Hello Konan!", 76, 0.toByte(), 255.toByte(), 255.toByte())
     val fpsDisplay = Text(font, 20f, 10f, "FPS: 0", 76, 0.toByte(), 255.toByte(), 0.toByte())
 
-    sfMusic_setLoop(music, 1)
-    //sfMusic_play(music)
+    Music.looping = true
+    //Music.play()
 
     memScoped {
         val window = Window("Test", 1024, 768, style = sfDefaultStyle)
 
-        window.clearColor = sfColor_fromRGB(0, 0, 100)
+        window.setClearColor(0, 0, 100)
         //window.enableVerticalSync()
 
         if (window.isOpen()) {
@@ -76,13 +78,11 @@ fun main(args: Array<String>) {
 
         Textures.destroyAll()
 
-        sfMusic_destroy(music)
-
         helloKonan.destroy()
         fpsDisplay.destroy()
         font.destroy()
 
-        Timer.destroy()
+        Cleanup.destroy()
     }
 
 }

@@ -2,10 +2,7 @@ package games.perses.sfml
 
 import games.perses.sfml.math.Matrix4
 import gles2.glViewport
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.nativeHeap
-import kotlinx.cinterop.readValue
+import kotlinx.cinterop.*
 import sfml.*
 
 /**
@@ -37,11 +34,14 @@ object View {
     val rect = nativeHeap.alloc<sfFloatRect>()
     val viewportRect = nativeHeap.alloc<sfFloatRect>()
 
-      init {
-          updateViewport()
+    init {
+        updateViewport()
 
-          // view = sfView_createFromRect(rect.readValue()) ?: throw IllegalStateException("Unable to create view!")
-      }
+        Cleanup.add {
+            nativeHeap.free(rect.ptr)
+            nativeHeap.free(viewportRect.ptr)
+        }
+    }
 
     fun resize(width: Int, height: Int) {
         this.windowWidth = width
@@ -69,7 +69,7 @@ object View {
         borderLeft = (windowWidth - unitWidth) / 2
         borderTop = (windowHeight - unitHeight) / 2
 
-        when(mode) {
+        when (mode) {
             ViewMode.NONE -> {
 
             }
@@ -81,9 +81,8 @@ object View {
             }
         }
 
-        //println("Set viewport to $aspectRatio -- $borderLeft, $borderTop, $windowWidth, $windowHeight (window: $width, $height)")
         updateViewport()
-        //println("Set matrix to $viewportWidth, $viewportHeight")
+
         matrix.setOrthographicProjection(-viewportWidth / 2f, viewportWidth / 2f, viewportHeight / 2f, -viewportHeight / 2f, -5f, 5f)
     }
 

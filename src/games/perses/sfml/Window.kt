@@ -3,6 +3,7 @@ package games.perses.sfml
 import gles2.glViewport
 import kotlinx.cinterop.*
 import sfml.*
+import cnames.structs.sfRenderWindow
 
 /**
  * User: rnentjes
@@ -21,7 +22,7 @@ class Window(
     var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
     val event = nativeHeap.alloc<sfEvent>()
     var handle: sfRenderWindow? = null
-    var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
+    private var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
 
     constructor(title: String): this(title, 800, 600, fullscreen = true)
 
@@ -127,5 +128,9 @@ class Window(
     fun getView(): CPointer<sfView>? = sfRenderWindow_getDefaultView(getWindowHandle().ptr)
 
     fun setView(view: CPointer<sfView>?) = sfRenderWindow_setView(getWindowHandle().ptr, view)
+
+    fun setClearColor(red: Byte, green: Byte, blue: Byte) {
+        clearColor = sfColor_fromRGB(red, green, blue);
+    }
 }
 

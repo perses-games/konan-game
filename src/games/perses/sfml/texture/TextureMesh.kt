@@ -1,5 +1,6 @@
 package games.perses.sfml.texture
 
+import games.perses.sfml.Cleanup
 import games.perses.sfml.View
 import games.perses.sfml.math.Matrix4
 import games.perses.sfml.shader.ShaderProgram
@@ -9,10 +10,10 @@ import gles2.GL_TEXTURE0
 import gles2.GL_TRIANGLES
 import gles2.glActiveTexture
 import kotlinx.cinterop.CValue
-import kotlinx.cinterop.pointed
-import kotlinx.cinterop.ptr
 import kotlinx.cinterop.useContents
 import sfml.*
+import cnames.structs.sfTexture
+import kotlinx.cinterop.CPointer
 
 /**
  * User: rnentjes
@@ -74,13 +75,13 @@ private val fragmentShaderSource = """
 
 class TextureData(
   val vMatrix: Matrix4,
-  val texture: sfTexture
+  val texture: CPointer<sfTexture>
 )
 
 class TextureMesh(
   val filename: String,
   matrix: Matrix4,
-  val glTexture: sfTexture,
+  val glTexture: CPointer<sfTexture>,
   val shaderProgram: ShaderProgram<TextureData>,
   val width: Int,
   val height: Int
@@ -120,7 +121,7 @@ class TextureMesh(
 
     fun render() {
         glActiveTexture(GL_TEXTURE0)
-        sfTexture_bind(glTexture.ptr)
+        sfTexture_bind(glTexture)
 
         shaderProgramMesh.render(data)
     }
@@ -146,41 +147,51 @@ object Textures {
         )
 
         shaderProgram = ShaderProgram(GL_TRIANGLES, vertexShaderSource, fragmentShaderSource, vainfo, setter)
+
+        Cleanup.add {
+            destroyAll()
+        }
     }
+
     fun getOrLoad(filename: String): TextureMesh {
         var result = textures[filename]
 
         if (result == null) {
-            val sfTxt = sfTexture_createFromFile(filename, null) ?: throw IllegalStateException("Couldn't find texture file: $filename")
-            sfTexture_setSmooth(sfTxt, 1)
-            val size: CValue<sfVector2u> = sfTexture_getSize(sfTxt)
-            size.useContents {
-                println("Texture $filename -> $x, $y")
-                result = TextureMesh(filename, matrix, sfTxt.pointed, shaderProgram, x, y)
-            }
-
+            load(filename)
+            result = get(filename)
         }
 
-        return result ?: throw IllegalStateException("Unable to load texture $filename")
+        return result
+    }
+
+    fun load(filename: String) {
+        val sfTxt = sfTexture_createFromFile(filename, null) ?: throw IllegalStateException("Couldn't find texture file: $filename")
+        sfTexture_setSmooth(sfTxt, 1)
+        val size: CValue<sfVector2u> = sfTexture_getSize(sfTxt)
+        size.useContents {
+            println("Texture $filename -> $x, $y")
+            val result = TextureMesh(filename, matrix, sfTxt, shaderProgram, x, y)
+            textures[filename] = result
+        }
     }
 
     fun destroy(filename: String) {
         val txt = textures[filename]
 
         if (txt != null) {
-            sfTexture_destroy(txt.glTexture.ptr)
+            destroy(txt)
         }
     }
 
     fun destroy(texture: TextureMesh) {
-        sfTexture_destroy(texture.glTexture.ptr)
+        sfTexture_destroy(texture.glTexture)
 
         textures.remove(texture.filename)
     }
 
     fun destroyAll() {
-        for ((key, value) in textures) {
-            sfTexture_destroy(value.glTexture.ptr)
+        for ((_, value) in textures) {
+            sfTexture_destroy(value.glTexture)
         }
 
         textures.clear()
@@ -200,7 +211,7 @@ object Textures {
     }
 
     fun render() {
-        for ((key, value) in textures) {
+        for ((_, value) in textures) {
             value.render()
         }
     }

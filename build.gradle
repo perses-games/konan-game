@@ -72,5 +72,9 @@ build {
             from compileKonanKonanlib.artifactPath
             into projectDir.canonicalPath + '/klib'
         }
+        copy {
+            from compileKonanKonanlib.artifactPath
+            into projectDir.canonicalPath + '/../konanlib-test/klib'
+        }
     }
 }

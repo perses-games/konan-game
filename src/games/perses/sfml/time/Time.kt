@@ -1,5 +1,6 @@
 package games.perses.sfml.time
 
+import games.perses.sfml.Cleanup
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import sfml.sfClock_create
@@ -20,6 +21,12 @@ object Timer {
     var fpsCount = 0
     var fps = 0
 
+    init {
+        Cleanup.add {
+            Timer.destroy()
+        }
+    }
+
     fun tick() {
         val elapsed = sfClock_getElapsedTime(clock.ptr)
 
@@ -36,7 +43,7 @@ object Timer {
         }
     }
 
-    fun destroy() {
+    private fun destroy() {
         sfClock_destroy(clock.ptr)
     }
 }
