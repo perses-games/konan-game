@@ -42,6 +42,10 @@ class Window(
 
         Cleanup.add {
             nativeHeap.free(event)
+
+            handle?.apply {
+                sfRenderWindow_destroy(this.ptr)
+            }
         }
     }
 
@@ -108,7 +112,6 @@ class Window(
     }
 
     fun destroy() {
-        nativeHeap.free(event.ptr)
         sfRenderWindow_destroy(getWindowHandle().ptr)
     }
 

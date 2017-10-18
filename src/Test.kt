@@ -74,8 +74,6 @@ fun main(args: Array<String>) {
             window.close()
         }
 
-        window.destroy()
-
         Textures.destroyAll()
 
         helloKonan.destroy()
