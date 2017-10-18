@@ -1,10 +1,7 @@
 
 import games.perses.math.Math
 import games.perses.rand.Rand
-import games.perses.sfml.Cleanup
-import games.perses.sfml.Events
-import games.perses.sfml.View
-import games.perses.sfml.Window
+import games.perses.sfml.*
 import games.perses.sfml.music.Music
 import games.perses.sfml.sprite.Sprite
 import games.perses.sfml.text.Font
@@ -12,7 +9,6 @@ import games.perses.sfml.text.Text
 import games.perses.sfml.texture.Textures
 import games.perses.sfml.time.Timer
 import kotlinx.cinterop.memScoped
-import sfml.sfDefaultStyle
 
 fun main(args: Array<String>) {
 
@@ -26,7 +22,7 @@ fun main(args: Array<String>) {
     //Music.play()
 
     memScoped {
-        val window = Window("Test", 1024, 768, style = sfDefaultStyle)
+        val window = Window("Test", 1024, 768, style = WindowStyle.DEFAULT.value)
 
         window.setClearColor(0, 0, 100)
         //window.enableVerticalSync()
@@ -73,8 +69,6 @@ fun main(args: Array<String>) {
             }
             window.close()
         }
-
-        Textures.destroyAll()
 
         helloKonan.destroy()
         fpsDisplay.destroy()

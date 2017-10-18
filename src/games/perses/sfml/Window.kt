@@ -10,6 +10,15 @@ import cnames.structs.sfRenderWindow
  * Time: 12:25
  */
 
+enum class WindowStyle(val value: Int) {
+    NONE(sfNone),
+    TITLE_BAR(sfTitlebar),
+    RESIZE(sfResize),
+    CLOSE(sfClose),
+    FULLSCREEN(sfFullscreen),
+    DEFAULT(sfDefaultStyle),
+}
+
 class Window(
   val title: String,
   val width: Int,
@@ -20,7 +29,7 @@ class Window(
 
     var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
     val event = nativeHeap.alloc<sfEvent>()
-    var handle: sfRenderWindow? = null
+    var handle: CPointer<sfRenderWindow>? = null
     private var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
 
     constructor(title: String): this(title, 800, 600, fullscreen = true)
@@ -44,7 +53,7 @@ class Window(
             nativeHeap.free(event)
 
             handle?.apply {
-                sfRenderWindow_destroy(this.ptr)
+                sfRenderWindow_destroy(this)
             }
         }
     }
@@ -52,7 +61,7 @@ class Window(
     private fun getWindowHandle() = handle ?: throw IllegalStateException("Window handle is null!")
 
     private fun createWindow() {
-        var window: CPointer<sfRenderWindow>? = null
+        var window: CPointer<sfRenderWindow>?
 
         memScoped {
             val windowContext = alloc<sfContextSettings>()
@@ -66,7 +75,7 @@ class Window(
             window = sfRenderWindow_create(videoMode, title, style, windowContext.readValue())
 
             if (window != null) {
-                handle = (window as CPointer<sfRenderWindow>).pointed
+                handle = window
 
                 videoMode.useContents {
                     println("Resize from videoMode: $width, $height")
@@ -79,61 +88,61 @@ class Window(
     }
 
     fun clear() {
-        sfRenderWindow_clear(getWindowHandle().ptr, clearColor)
+        sfRenderWindow_clear(getWindowHandle(), clearColor)
     }
 
     fun resetGLStates() {
-        sfRenderWindow_resetGLStates(getWindowHandle().ptr)
+        sfRenderWindow_resetGLStates(getWindowHandle())
     }
 
     fun pushGLStates() {
-        sfRenderWindow_pushGLStates(getWindowHandle().ptr)
+        sfRenderWindow_pushGLStates(getWindowHandle())
     }
 
     fun popGLStates() {
-        sfRenderWindow_popGLStates(getWindowHandle().ptr)
+        sfRenderWindow_popGLStates(getWindowHandle())
     }
 
     fun draw(drawable: Drawable) {
-        drawable.draw(getWindowHandle())
+        drawable.draw(getWindowHandle().pointed)
     }
 
     fun draw(drawable: Drawable, x: Float, y: Float) {
         drawable.setPosition(x, y)
-        drawable.draw(getWindowHandle())
+        drawable.draw(getWindowHandle().pointed)
     }
 
     fun display() {
-        sfRenderWindow_display(getWindowHandle().ptr)
+        sfRenderWindow_display(getWindowHandle())
     }
 
     fun close() {
-        sfRenderWindow_close(getWindowHandle().ptr)
+        sfRenderWindow_close(getWindowHandle())
     }
 
     fun destroy() {
-        sfRenderWindow_destroy(getWindowHandle().ptr)
+        sfRenderWindow_destroy(getWindowHandle())
     }
 
     fun pollEvents() {
-        while (sfRenderWindow_pollEvent(getWindowHandle().ptr, event.ptr) > 0) {
+        while (sfRenderWindow_pollEvent(getWindowHandle(), event.ptr) > 0) {
             Events.handleEvent(event)
         }
     }
 
-    fun isOpen() = sfRenderWindow_isOpen(getWindowHandle().ptr) > 0
+    fun isOpen() = sfRenderWindow_isOpen(getWindowHandle()) > 0
 
     fun enableVerticalSync() {
-        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle().ptr, 1)
+        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle(), 1)
     }
 
     fun disableVerticalSync() {
-        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle().ptr, 0)
+        sfRenderWindow_setVerticalSyncEnabled(getWindowHandle(), 0)
     }
 
-    fun getView(): CPointer<sfView>? = sfRenderWindow_getDefaultView(getWindowHandle().ptr)
+    fun getView(): CPointer<sfView>? = sfRenderWindow_getDefaultView(getWindowHandle())
 
-    fun setView(view: CPointer<sfView>?) = sfRenderWindow_setView(getWindowHandle().ptr, view)
+    fun setView(view: CPointer<sfView>?) = sfRenderWindow_setView(getWindowHandle(), view)
 
     fun setClearColor(red: Byte, green: Byte, blue: Byte) {
         clearColor = sfColor_fromRGB(red, green, blue);

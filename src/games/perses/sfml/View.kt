@@ -38,6 +38,10 @@ object View {
         updateViewport()
 
         Cleanup.add {
+            view?.apply {
+                sfView_destroy(view)
+            }
+
             nativeHeap.free(rect.ptr)
             nativeHeap.free(viewportRect.ptr)
         }

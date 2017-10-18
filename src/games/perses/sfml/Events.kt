@@ -15,6 +15,12 @@ object Events {
             sfEventType.sfEvtClosed -> {
                 running = false
             }
+//            sfEventType.sfEvtKeyReleased -> {
+//
+//            }
+//            sfEventType.sfEvtTextEntered -> {
+//
+//            }
             sfEventType.sfEvtKeyPressed -> {
                 // println("Key: ${event.key.code}")
                 if (event.key.code == 36) {
@@ -25,6 +31,7 @@ object Events {
                 View.resize(event.size.width, event.size.height)
             }
             else -> {
+                // println("Event: ${event.type}")
                 // ignore
             }
         }

@@ -1,5 +1,6 @@
 package games.perses.sfml.shader
 
+import games.perses.sfml.Cleanup
 import gles2.*
 import kotlinx.cinterop.*
 
@@ -32,6 +33,10 @@ class ShaderProgramMesh<T>(
             glBindBuffer(GL_ARRAY_BUFFER, attribBuffer)
             glBufferData(GL_ARRAY_BUFFER, (bufferSize * 4).toLong(), data.getPointer(memScope), GL_DYNAMIC_DRAW)
             glBindBuffer(GL_ARRAY_BUFFER, 0)
+        }
+
+        Cleanup.add {
+            nativeHeap.free(data)
         }
     }
 
@@ -80,7 +85,4 @@ class ShaderProgramMesh<T>(
         }
     }
 
-    fun destroy() {
-        nativeHeap.free(data)
-    }
 }

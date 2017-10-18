@@ -176,10 +176,8 @@ object Textures {
     }
 
     fun destroy(filename: String) {
-        val txt = textures[filename]
-
-        if (txt != null) {
-            destroy(txt)
+        textures[filename]?.apply {
+            destroy(this)
         }
     }
 
@@ -205,10 +203,6 @@ object Textures {
 
     fun has(name: String) = textures[name] != null
     fun get(name: String) = textures[name] ?: throw IllegalArgumentException("Texture with name $name is not loaded!")
-
-    fun clear() {
-        // todo: delete and unbind all textures...
-    }
 
     fun render() {
         for ((_, value) in textures) {
