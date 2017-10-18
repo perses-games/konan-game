@@ -1,6 +1,5 @@
 package games.perses.sfml
 
-import gles2.glViewport
 import kotlinx.cinterop.*
 import sfml.*
 import cnames.structs.sfRenderWindow
@@ -40,6 +39,10 @@ class Window(
         }
 
         createWindow()
+
+        Cleanup.add {
+            nativeHeap.free(event)
+        }
     }
 
     private fun getWindowHandle() = handle ?: throw IllegalStateException("Window handle is null!")
@@ -109,9 +112,9 @@ class Window(
         sfRenderWindow_destroy(getWindowHandle().ptr)
     }
 
-    fun pollEvents(callback: (sfEvent) -> Unit) {
+    fun pollEvents() {
         while (sfRenderWindow_pollEvent(getWindowHandle().ptr, event.ptr) > 0) {
-            callback(event)
+            Events.handleEvent(event)
         }
     }
 

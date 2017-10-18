@@ -47,7 +47,7 @@ fun main(args: Array<String>) {
 
             while (Events.running) {
                 window.clear()
-                window.pollEvents(Events::handleEvent)
+                window.pollEvents()
 
                 View.updateViewport()
                 for (sprite in sprites) {
