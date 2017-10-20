@@ -2,6 +2,8 @@
 import games.perses.math.Math
 import games.perses.rand.Rand
 import games.perses.sfml.*
+import games.perses.sfml.input.Keyboard
+import games.perses.sfml.input.Keys
 import games.perses.sfml.music.Music
 import games.perses.sfml.sprite.Sprite
 import games.perses.sfml.text.Font
@@ -11,6 +13,10 @@ import games.perses.sfml.time.Timer
 import kotlinx.cinterop.memScoped
 
 fun main(args: Array<String>) {
+    val SPEED = 1000f // pixels per second
+
+    var x: Float = 0f
+    var y: Float = 0f
 
     Music.load("data/music/DST-TechnoBasic.ogg")
 
@@ -27,6 +33,12 @@ fun main(args: Array<String>) {
         window.setClearColor(0, 0, 100)
         //window.enableVerticalSync()
 
+        Keyboard.keypressListener = { keycode ->
+            if (keycode == Keys.F11.keyCode) {
+                window.switchFullscreen()
+            }
+        }
+
         if (window.isOpen()) {
             val smiley = Textures.getOrLoad("data/img/smiley.png")
 
@@ -38,12 +50,26 @@ fun main(args: Array<String>) {
             for (index in 1..100) {
                 val x = Rand.getInt() % 2000 - 1000f
                 val y = Rand.getInt() % 2000 - 1000f
-                sprites.add(Sprite(smiley, x, y, 0.1f))
+                val s = Rand.getFloat() * 0.5f
+                sprites.add(Sprite(smiley, x, y, s))
             }
 
-            while (Events.running) {
+            while (!Keyboard.isPressed(Keys.ESC)) {
                 window.clear()
                 window.pollEvents()
+
+                if (Keyboard.isPressed(Keys.LEFT)) {
+                    x -= Timer.delta * SPEED
+                }
+                if (Keyboard.isPressed(Keys.RIGHT)) {
+                    x += Timer.delta * SPEED
+                }
+                if (Keyboard.isPressed(Keys.UP)) {
+                    y -= Timer.delta * SPEED
+                }
+                if (Keyboard.isPressed(Keys.DOWN)) {
+                    y += Timer.delta * SPEED
+                }
 
                 View.updateViewport()
                 for (sprite in sprites) {
@@ -59,7 +85,7 @@ fun main(args: Array<String>) {
                 window.draw(fpsDisplay)
 
                 View.updateViewport()
-                smiley.queueDraw(-200f, -200f, (0.50f + Math.sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
+                smiley.queueDraw(x, y, (0.50f + Math.sin(Timer.time.toDouble()) * 0.25f).toFloat(), Timer.time)
 
                 smiley.render()
 

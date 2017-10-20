@@ -76,8 +76,13 @@ enum class Keys(val keyCode: Int) {
 }
 
 object Keyboard {
+    var keypressListener: ((keycode: Int) -> Unit)? = null
 
-    fun isPressed(key: Keys) = sfKeyboard_isKeyPressed(key.keyCode)
+    fun isPressed(key: Keys): Boolean {
+        val result = sfKeyboard_isKeyPressed(key.keyCode)
+
+        return result == 1
+    }
 
 }
 

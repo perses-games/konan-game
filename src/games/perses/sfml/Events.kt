@@ -1,5 +1,6 @@
 package games.perses.sfml
 
+import games.perses.sfml.input.Keyboard
 import sfml.sfEvent
 import sfml.sfEventType
 
@@ -22,10 +23,7 @@ object Events {
 //
 //            }
             sfEventType.sfEvtKeyPressed -> {
-                // println("Key: ${event.key.code}")
-                if (event.key.code == 36) {
-                    running = false
-                }
+                Keyboard.keypressListener?.invoke(event.key.code)
             }
             sfEventType.sfEvtResized -> {
                 View.resize(event.size.width, event.size.height)

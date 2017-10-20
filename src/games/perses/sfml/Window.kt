@@ -23,28 +23,25 @@ class Window(
   val title: String,
   val width: Int,
   val height: Int,
-  val style: Int = sfFullscreen,
-  var fullscreen: Boolean = false
+  var style: Int = sfFullscreen
 ) {
-
+    var originalStyle: Int = style
     var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
     val event = nativeHeap.alloc<sfEvent>()
     var handle: CPointer<sfRenderWindow>? = null
     private var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
 
-    constructor(title: String): this(title, 800, 600, fullscreen = true)
+    constructor(title: String): this(title, 800, 600)
 
     init {
-        if (!fullscreen) {
-            memScoped {
-                val vm = alloc<sfVideoMode>()
+        memScoped {
+            val vm = alloc<sfVideoMode>()
 
-                vm.width = width
-                vm.height = height
-                vm.bitsPerPixel = 24
+            vm.width = width
+            vm.height = height
+            vm.bitsPerPixel = 24
 
-                videoMode = vm.readValue()
-            }
+            videoMode = vm.readValue()
         }
 
         createWindow()
@@ -62,6 +59,10 @@ class Window(
 
     private fun createWindow() {
         var window: CPointer<sfRenderWindow>?
+
+        handle?.apply {
+            sfRenderWindow_destroy(this)
+        }
 
         memScoped {
             val windowContext = alloc<sfContextSettings>()
@@ -147,5 +148,14 @@ class Window(
     fun setClearColor(red: Byte, green: Byte, blue: Byte) {
         clearColor = sfColor_fromRGB(red, green, blue);
     }
-}
 
+    fun switchFullscreen() {
+        style = if ((style and sfFullscreen) > 0) {
+            style and (-sfFullscreen + 1)
+        } else {
+            style or sfFullscreen
+        }
+
+        createWindow()
+    }
+}

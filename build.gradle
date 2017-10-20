@@ -45,7 +45,7 @@ konanArtifacts {
         useInterop "math"
         useInterop "gles2"
 
-        enableOptimization()
+        // enableOptimization()
     }
 
     konanlib {
