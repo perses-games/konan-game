@@ -40,7 +40,6 @@ class ShaderProgramMesh<T>(
         }
     }
 
-
     fun queue(vararg vertices: Float) {
         for (value in vertices) {
             data[currentIndex++] = value

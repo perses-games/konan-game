@@ -19,14 +19,34 @@ enum class WindowStyle(val value: Int) {
     DEFAULT(sfDefaultStyle),
 }
 
-class Window(
+class WindowOptions(
+    var depthBits: Int,
+    var stencilBits: Int,
+    var antialiasingLevel: Int,
+    var majorVersion: Int,
+    var minorVersion: Int,
+    var attributeFlags: sfUint32
+)
+
+class SizedWindow(
+  title: String,
+  width: Int,
+  height: Int,
+  options: WindowOptions? = null
+): Window(title, width, height, options, false)
+
+class FullscreenWindow(
+  title: String,
+  options: WindowOptions? = null
+): Window(title, 800, 600, options, true)
+
+open class Window(
   val title: String,
   val width: Int,
   val height: Int,
-  var style: Int = sfFullscreen
+  val options: WindowOptions? = null,
+  var fullscreen: Boolean = false
 ) {
-    var originalStyle: Int = style
-    var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
     val event = nativeHeap.alloc<sfEvent>()
     var handle: CPointer<sfRenderWindow>? = null
     private var clearColor = sfColor_fromRGBA(0,0,0,255.toByte())
@@ -34,16 +54,6 @@ class Window(
     constructor(title: String): this(title, 800, 600)
 
     init {
-        memScoped {
-            val vm = alloc<sfVideoMode>()
-
-            vm.width = width
-            vm.height = height
-            vm.bitsPerPixel = 24
-
-            videoMode = vm.readValue()
-        }
-
         createWindow()
 
         Cleanup.add {
@@ -65,12 +75,28 @@ class Window(
         }
 
         memScoped {
+            var videoMode: CValue<sfVideoMode> = sfVideoMode_getDesktopMode()
+            var style: Int = sfDefaultStyle
+
+            if (!fullscreen) {
+                val vm = alloc<sfVideoMode>()
+
+                vm.width = width
+                vm.height = height
+                vm.bitsPerPixel = 24
+
+                videoMode = vm.readValue()
+                style = style and (-sfFullscreen + 1)
+            } else {
+                style = style or sfFullscreen
+            }
+
             val windowContext = alloc<sfContextSettings>()
 
-            windowContext.majorVersion = 2
-            windowContext.minorVersion = 0
-            windowContext.depthBits = 0
-            windowContext.antialiasingLevel = 4
+            windowContext.majorVersion = options?.majorVersion  ?: 2
+            windowContext.minorVersion = options?.minorVersion ?: 0
+            windowContext.depthBits = options?.depthBits ?: 0
+            windowContext.antialiasingLevel = options?.antialiasingLevel ?: 4
             // windowContext.attributeFlags = sfContextDebug
 
             window = sfRenderWindow_create(videoMode, title, style, windowContext.readValue())
@@ -150,11 +176,7 @@ class Window(
     }
 
     fun switchFullscreen() {
-        style = if ((style and sfFullscreen) > 0) {
-            style and (-sfFullscreen + 1)
-        } else {
-            style or sfFullscreen
-        }
+        fullscreen = !fullscreen
 
         createWindow()
     }

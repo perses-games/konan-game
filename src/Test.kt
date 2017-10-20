@@ -1,7 +1,9 @@
 
 import games.perses.math.Math
 import games.perses.rand.Rand
-import games.perses.sfml.*
+import games.perses.sfml.Cleanup
+import games.perses.sfml.SizedWindow
+import games.perses.sfml.View
 import games.perses.sfml.input.Keyboard
 import games.perses.sfml.input.Keys
 import games.perses.sfml.music.Music
@@ -28,7 +30,8 @@ fun main(args: Array<String>) {
     //Music.play()
 
     memScoped {
-        val window = Window("Test", 1024, 768, style = WindowStyle.DEFAULT.value)
+        val window = SizedWindow("Test", 1024, 768)
+        //val window = FullscreenWindow("Test")
 
         window.setClearColor(0, 0, 100)
         //window.enableVerticalSync()
